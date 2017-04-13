@@ -1,16 +1,15 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace MonkeyspeakTest
 {
-	[TestClass]
-	public class UnitTest1
-	{
-		private string testScript = @"
+    [TestClass]
+    public class UnitTest1
+    {
+        #region Private Fields
+
+        private string testScript = @"
 *This is a comment
 (0:0) when the script is started,
 		(5:100) set %hello to {Hello World}.
@@ -22,96 +21,133 @@ namespace MonkeyspeakTest
 		(5:102) print {This is a test script.} to the console.
 ";
 
-		[TestMethod]
-		public void DebugTest()
-		{
-			Monkeyspeak.MonkeyspeakEngine engine = new Monkeyspeak.MonkeyspeakEngine();
-			Monkeyspeak.Page page = engine.LoadFromString(testScript);
+        #endregion Private Fields
 
-			page.Error += DebugAllErrors;
+        #region Public Methods
 
-			List<Monkeyspeak.Trigger> triggers = new List<Monkeyspeak.Trigger>();
+        [TestMethod, ExpectedException(typeof(Monkeyspeak.MonkeyspeakException))]
+        public void DebugTest()
+        {
+            Monkeyspeak.MonkeyspeakEngine engine = new Monkeyspeak.MonkeyspeakEngine();
+            Monkeyspeak.Page page = engine.LoadFromString(testScript);
 
-			page.LoadSysLibrary();
-			page.LoadDebugLibrary();
+            page.Error += DebugAllErrors;
 
-			Monkeyspeak.Variable var = page.SetVariable("%testVariable", "Hello WOrld", true);
+            List<Monkeyspeak.Trigger> triggers = new List<Monkeyspeak.Trigger>();
 
-			page.SetTriggerHandler(Monkeyspeak.TriggerCategory.Cause, 0, HandleAllCauses);
+            page.LoadSysLibrary();
+            page.LoadDebugLibrary();
 
-			// Trigger count created by subscribing to TriggerAdded event and putting triggers into a list.
-			Console.WriteLine("Trigger Count: " + page.Size);
+            Monkeyspeak.Variable var = page.SetVariable("%testVariable", "Hello WOrld", true);
 
-			page.Execute(0);
-		}
+            page.SetTriggerHandler(Monkeyspeak.TriggerCategory.Cause, 0, HandleAllCauses);
 
-		[TestMethod]
-		public void DurabilityParseTest()
-		{
-			Monkeyspeak.MonkeyspeakEngine engine = new Monkeyspeak.MonkeyspeakEngine();
+            // Trigger count created by subscribing to TriggerAdded event
+            // and putting triggers into a list.
+            Console.WriteLine("Trigger Count: " + page.Size);
 
-			// Set the trigger limit to int.MaxValue to prevent TriggerLimit reached exceptions
-			engine.Options.TriggerLimit = int.MaxValue;
+            page.Execute(0);
+        }
 
-			var bigScript = testScript;
-			for (int i = 0; i <= 6000; i++)
-			{
-				bigScript += testScript + "\n";
-			}
-			Monkeyspeak.Page page = engine.LoadFromString(bigScript);
+        [TestMethod]
+        public void DemoTest()
+        {
+            Monkeyspeak.MonkeyspeakEngine engine = new Monkeyspeak.MonkeyspeakEngine();
+            Monkeyspeak.Page page = engine.LoadFromString(testScript);
 
-			page.Error += DebugAllErrors;
+            page.Error += DebugAllErrors;
 
-			page.LoadSysLibrary();
+            List<Monkeyspeak.Trigger> triggers = new List<Monkeyspeak.Trigger>();
 
-			page.SetTriggerHandler(Monkeyspeak.TriggerCategory.Cause, 0, HandleAllCauses);
+            page.LoadSysLibrary();
 
-			Console.WriteLine("Page Trigger Count: " + page.Size);
-			//page.Execute(Monkeyspeak.TriggerCategory.Cause, 0);
-		}
+            Monkeyspeak.Variable var = page.SetVariable("%testVariable", "Hello WOrld", true);
 
-		[TestMethod]
-		public void DemoTest()
-		{
-			Monkeyspeak.MonkeyspeakEngine engine = new Monkeyspeak.MonkeyspeakEngine();
-			Monkeyspeak.Page page = engine.LoadFromString(testScript);
+            page.SetTriggerHandler(Monkeyspeak.TriggerCategory.Cause, 0, HandleAllCauses);
 
-			page.Error += DebugAllErrors;
+            // Trigger count created by subscribing to TriggerAdded event
+            // and putting triggers into a list.
+            Console.WriteLine("Trigger Count: " + page.Size);
 
-			List<Monkeyspeak.Trigger> triggers = new List<Monkeyspeak.Trigger>();
+            page.Execute(0);
+        }
 
-			page.LoadSysLibrary();
+        [TestMethod]
+        public void DurabilityParseTest()
+        {
+            Monkeyspeak.MonkeyspeakEngine engine = new Monkeyspeak.MonkeyspeakEngine();
 
-			Monkeyspeak.Variable var = page.SetVariable("%testVariable", "Hello WOrld", true);
+            // Set the trigger limit to int.MaxValue to prevent TriggerLimit
+            // reached exceptions
+            engine.Options.TriggerLimit = int.MaxValue;
 
-			page.SetTriggerHandler(Monkeyspeak.TriggerCategory.Cause, 0, HandleAllCauses);
+            var bigScript = testScript;
+            for (int i = 0; i <= 6000; i++)
+            {
+                bigScript += testScript + "\n";
+            }
+            Monkeyspeak.Page page = engine.LoadFromString(bigScript);
 
-			// Trigger count created by subscribing to TriggerAdded event and putting triggers into a list.
-			Console.WriteLine("Trigger Count: " + page.Size);
+            page.Error += DebugAllErrors;
 
-			page.Execute(0);
-		}
+            page.LoadSysLibrary();
 
-		[TestMethod]
-		public void SetGetVariableTest()
-		{
-			Monkeyspeak.MonkeyspeakEngine engine = new Monkeyspeak.MonkeyspeakEngine();
-			Monkeyspeak.Page page = engine.LoadFromString(testScript);
+            page.SetTriggerHandler(Monkeyspeak.TriggerCategory.Cause, 0, HandleAllCauses);
 
-			page.Error += DebugAllErrors;
+            Console.WriteLine("Page Trigger Count: " + page.Size);
+            //page.Execute(Monkeyspeak.TriggerCategory.Cause, 0);
+        }
 
-			for (int i = 0; i <= 10; i++)
-				page.SetVariable("Name", true.ToString(), false);
-			foreach (var variable in page.Scope)
-			{
-				System.Diagnostics.Debug.WriteLine(variable);
-			}
-		}
+        [TestMethod]
+        public void ErrorTriggerTest()
+        {
+            var errorTestScript = @"
+(0:0) when the script starts,
+		(5:102) print {This is a test of the new error system} to the console.
+		(5:105) raise an error.
+		(5:102) print {This will NOT be displayed because an error was raised} to the console.
+";
+            Monkeyspeak.MonkeyspeakEngine engine = new Monkeyspeak.MonkeyspeakEngine();
+            Monkeyspeak.Page page = engine.LoadFromString(errorTestScript);
 
-		[TestMethod]
-		public void IOLibraryTest()
-		{
-			var ioTestString = @"
+            page.Error += DebugAllErrors;
+
+            page.LoadSysLibrary();
+            try
+            {
+                page.Execute(0);
+            }
+            catch (Monkeyspeak.MonkeyspeakException ex) { System.Diagnostics.Debug.WriteLine("A Monkeyspeak Exception was raised!"); }
+        }
+
+        [TestMethod]
+        public void GetTriggerDescriptionsTest()
+        {
+            Monkeyspeak.MonkeyspeakEngine engine = new Monkeyspeak.MonkeyspeakEngine();
+            Monkeyspeak.Page page = engine.LoadFromString("");
+
+            page.Error += DebugAllErrors;
+
+            page.LoadSysLibrary();
+            page.LoadIOLibrary();
+            page.LoadMathLibrary();
+            page.LoadTimerLibrary();
+
+            foreach (string desc in page.GetTriggerDescriptions())
+            {
+                Console.WriteLine(desc);
+            }
+        }
+
+        public bool HandleAllCauses(Monkeyspeak.TriggerReader reader)
+        {
+            return true;
+        }
+
+        [TestMethod]
+        public void IOLibraryTest()
+        {
+            var ioTestString = @"
 (0:0) when the script starts,
 	(5:100) set variable %file to {test.txt}.
 	(5:102) print {%file} to the console.
@@ -130,64 +166,39 @@ namespace MonkeyspeakTest
 	(5:150) take variable %test and add 2 to it.
 	(5:102) print {%test} to the console.
 ";
-			Monkeyspeak.MonkeyspeakEngine engine = new Monkeyspeak.MonkeyspeakEngine();
-			Monkeyspeak.Page page = engine.LoadFromString(ioTestString);
+            Monkeyspeak.MonkeyspeakEngine engine = new Monkeyspeak.MonkeyspeakEngine();
+            Monkeyspeak.Page page = engine.LoadFromString(ioTestString);
 
-			page.Error += DebugAllErrors;
+            page.Error += DebugAllErrors;
 
-			page.LoadSysLibrary();
-			page.LoadIOLibrary();
+            page.LoadSysLibrary();
+            page.LoadIOLibrary();
 
-			page.SetTriggerHandler(Monkeyspeak.TriggerCategory.Cause, 0, HandleAllCauses);
+            page.SetTriggerHandler(Monkeyspeak.TriggerCategory.Cause, 0, HandleAllCauses);
 
-			page.Execute(0);
-		}
+            page.Execute(0);
+        }
 
-		[TestMethod]
-		public void ErrorTriggerTest()
-		{
-			var errorTestScript = @"
-(0:0) when the script starts,
-		(5:102) print {This is a test of the new error system} to the console.
-		(5:105) raise an error.
-		(5:102) print {This will NOT be displayed because an error was raised} to the console.
-";
-			Monkeyspeak.MonkeyspeakEngine engine = new Monkeyspeak.MonkeyspeakEngine();
-			Monkeyspeak.Page page = engine.LoadFromString(errorTestScript);
+        [TestMethod]
+        public void SetGetVariableTest()
+        {
+            Monkeyspeak.MonkeyspeakEngine engine = new Monkeyspeak.MonkeyspeakEngine();
+            Monkeyspeak.Page page = engine.LoadFromString(testScript);
 
-			page.Error += DebugAllErrors;
+            page.Error += DebugAllErrors;
 
-			page.LoadSysLibrary();
-			try
-			{
-				page.Execute(0);
-			}
-			catch (Monkeyspeak.MonkeyspeakException ex) { System.Diagnostics.Debug.WriteLine("A Monkeyspeak Exception was raised!"); }
-		}
+            for (int i = 0; i <= 10; i++)
+                page.SetVariable("Name", true.ToString(), false);
+            foreach (var variable in page.Scope)
+            {
+                System.Diagnostics.Debug.WriteLine(variable);
+            }
+        }
 
-		[TestMethod]
-		public void GetTriggerDescriptionsTest()
-		{
-			Monkeyspeak.MonkeyspeakEngine engine = new Monkeyspeak.MonkeyspeakEngine();
-			Monkeyspeak.Page page = engine.LoadFromString("");
-
-			page.Error += DebugAllErrors;
-
-			page.LoadSysLibrary();
-			page.LoadIOLibrary();
-			page.LoadMathLibrary();
-			page.LoadTimerLibrary();
-
-			foreach (string desc in page.GetTriggerDescriptions())
-			{
-				Console.WriteLine(desc);
-			}
-		}
-
-		[TestMethod]
-		public void TimerLibraryTest()
-		{
-			var timerLibTestScript = @"
+        [TestMethod]
+        public void TimerLibraryTest()
+        {
+            var timerLibTestScript = @"
 (0:0) when the script starts,
 	(5:101) set variable %timer to 1.
 	(5:300) create timer %timer to go off every 2 second(s).
@@ -195,31 +206,32 @@ namespace MonkeyspeakTest
 (0:300) when timer %timer goes off,
 	(5:102) print {Timer %timer went off.} to the console.
 ";
-			Monkeyspeak.MonkeyspeakEngine engine = new Monkeyspeak.MonkeyspeakEngine();
-			Monkeyspeak.Page page = engine.LoadFromString(timerLibTestScript);
+            Monkeyspeak.MonkeyspeakEngine engine = new Monkeyspeak.MonkeyspeakEngine();
+            Monkeyspeak.Page page = engine.LoadFromString(timerLibTestScript);
 
-			page.Error += DebugAllErrors;
+            page.Error += DebugAllErrors;
 
-			page.LoadSysLibrary();
-			page.LoadTimerLibrary();
+            page.LoadSysLibrary();
+            page.LoadTimerLibrary();
 
-			page.SetTriggerHandler(Monkeyspeak.TriggerCategory.Cause, 0, HandleAllCauses);
+            page.SetTriggerHandler(Monkeyspeak.TriggerCategory.Cause, 0, HandleAllCauses);
 
-			page.Execute(0);
-			System.Threading.Thread.Sleep(4000);
-		}
+            page.Execute(0);
+            System.Threading.Thread.Sleep(4000);
+        }
 
-		public bool HandleAllCauses(Monkeyspeak.TriggerReader reader)
-		{
-			return true;
-		}
+        #endregion Public Methods
 
-		private void DebugAllErrors(Monkeyspeak.Trigger trigger, Exception ex)
-		{
-			Console.WriteLine("Error with " + trigger.ToString());
+        #region Private Methods
+
+        private void DebugAllErrors(Monkeyspeak.Trigger trigger, Exception ex)
+        {
+            Console.WriteLine("Error with " + trigger.ToString());
 #if DEBUG
 			System.Diagnostics.Debug.WriteLine(ex.ToString());
 #endif
-		}
-	}
+        }
+
+        #endregion Private Methods
+    }
 }
