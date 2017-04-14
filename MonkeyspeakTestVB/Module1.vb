@@ -6,19 +6,7 @@
     ''' <param name="addIfNotExist"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    <Runtime.CompilerServices.Extension()> _
-    Public Function ReadVariableOrNumber(ByVal reader As Monkeyspeak.TriggerReader, Optional addIfNotExist As Boolean = False) As Double
-        If reader.PeekVariable Then
-            Dim value = reader.ReadVariable(addIfNotExist).Value
-            If value = GetType(Double) Then
-                Return value
-            End If
-        ElseIf reader.PeekNumber Then
-            Return reader.ReadNumber
-        End If
-        Return Nothing
-    End Function
-
+    <Runtime.CompilerServices.Extension()>
     Sub Main()
         Dim testScript As String = <a>
 (0:0) when the script starts,
@@ -63,10 +51,24 @@
         Console.ReadKey()
     End Sub
 
+    Public Function ReadVariableOrNumber(ByVal reader As Monkeyspeak.TriggerReader, Optional addIfNotExist As Boolean = False) As Double
+        If reader.PeekVariable Then
+            Dim value = reader.ReadVariable(addIfNotExist).Value
+            If value = GetType(Double) Then
+                Return value
+            End If
+        ElseIf reader.PeekNumber Then
+            Return reader.ReadNumber
+        End If
+        Return Nothing
+    End Function
 End Module
 
 Class TestLibrary
     <Monkeyspeak.TriggerHandler(Monkeyspeak.TriggerCategory.Cause, 1000, "(0:1000) test cause with reflection,")>
+
+#Region "Public Methods"
+
     Shared Function TestVBReflectionTriggerHandler(reader As Monkeyspeak.TriggerReader) As Boolean 'IMPORTANT label return with As Boolean
         Return True
     End Function
@@ -78,4 +80,7 @@ Class TestLibrary
         End If
         Return True
     End Function
+
+#End Region
+
 End Class
