@@ -1,10 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Monkeyspeak;
+using NUnit.Framework;
 using System;
 using System.Reflection;
 
 namespace MonkeyspeakTest
 {
-    [TestClass]
+    [TestFixture]
     public class UnitTest2
     {
         #region Private Fields
