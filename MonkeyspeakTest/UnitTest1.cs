@@ -1,10 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 
 namespace MonkeyspeakTest
 {
-    [TestClass]
+    [TestFixture]
     public class UnitTest1
     {
         #region Private Fields
@@ -25,7 +26,7 @@ namespace MonkeyspeakTest
 
         #region Public Methods
 
-        [TestMethod, ExpectedException(typeof(Monkeyspeak.MonkeyspeakException))]
+        [Test, ExpectedException(typeof(Monkeyspeak.MonkeyspeakException))]
         public void DebugTest()
         {
             Monkeyspeak.MonkeyspeakEngine engine = GetMonkeySpeakEngine();
@@ -49,7 +50,7 @@ namespace MonkeyspeakTest
             page.Execute(0);
         }
 
-        [TestMethod]
+        [Test]
         public void DemoTest()
         {
             Monkeyspeak.MonkeyspeakEngine engine = GetMonkeySpeakEngine();
@@ -72,7 +73,7 @@ namespace MonkeyspeakTest
             page.Execute(0);
         }
 
-        [TestMethod]
+        [Test]
         public void DurabilityParseTest()
         {
             Monkeyspeak.MonkeyspeakEngine engine = GetMonkeySpeakEngine();
@@ -98,7 +99,7 @@ namespace MonkeyspeakTest
             //page.Execute(Monkeyspeak.TriggerCategory.Cause, 0);
         }
 
-        [TestMethod, ExpectedException(typeof(Monkeyspeak.MonkeyspeakException))]
+        [Test, ExpectedException(typeof(Monkeyspeak.MonkeyspeakException))]
         public void ErrorTriggerTest()
         {
             var errorTestScript = @"
@@ -118,7 +119,7 @@ namespace MonkeyspeakTest
             page.Execute(0);
         }
 
-        [TestMethod]
+        [Test]
         public void GetTriggerDescriptionsTest()
         {
             Monkeyspeak.MonkeyspeakEngine engine = GetMonkeySpeakEngine();
@@ -142,7 +143,7 @@ namespace MonkeyspeakTest
             return true;
         }
 
-        [TestMethod]
+        [Test]
         public void IOLibraryTest()
         {
             var ioTestString = @"
@@ -177,7 +178,7 @@ namespace MonkeyspeakTest
             page.Execute(0);
         }
 
-        [TestMethod]
+        [Test]
         public void SetGetVariableTest()
         {
             Monkeyspeak.MonkeyspeakEngine engine = GetMonkeySpeakEngine();
@@ -196,7 +197,7 @@ namespace MonkeyspeakTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public void TimerLibraryTest()
         {
             var timerLibTestScript = @"
