@@ -14,7 +14,7 @@
     <TargetFrameworkVersion>Framework45</TargetFrameworkVersion>
 
     <!-- Path to Test Adapters -->
-    <TestAdaptersPaths>%SystemDrive%\Temp\foo;packages\NUnit3TestAdapter.3.7.0\tools</TestAdaptersPaths>
+    <TestAdaptersPaths>%SystemDrive%\Temp\foo;packages\NUnit3TestAdapter.3.7.1\tools</TestAdaptersPaths>
   </RunConfiguration>
 
   <!-- Configurations for data collectors -->
