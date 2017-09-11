@@ -11,10 +11,10 @@
     <TargetPlatform>x64</TargetPlatform>
 
     <!-- Framework35 | [Framework40] | Framework45 -->
-    <TargetFrameworkVersion>Framework46</TargetFrameworkVersion>
+    <TargetFrameworkVersion>Framework45</TargetFrameworkVersion>
 
     <!-- Path to Test Adapters -->
-    <TestAdaptersPaths>%SystemDrive%\Temp\foo;packages\NUnit3TestAdapter.3.7.0\tools</TestAdaptersPaths>
+    <TestAdaptersPaths>%SystemDrive%\Temp\foo;packages\NUnit3TestAdapter.3.7.1\tools</TestAdaptersPaths>
   </RunConfiguration>
 
   <!-- Configurations for data collectors -->
