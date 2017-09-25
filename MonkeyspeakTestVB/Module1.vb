@@ -63,11 +63,13 @@
         End If
         Return Nothing
     End Function
+
 End Module
 
 Class TestLibrary
 
 #Region "Public Methods"
+
     <Monkeyspeak.TriggerHandler(Monkeyspeak.TriggerCategory.Cause, 1000, "(0:1000) test cause with reflection,")>
     Shared Function TestVBReflectionTriggerHandler(reader As Monkeyspeak.TriggerReader) As Boolean 'IMPORTANT label return with As Boolean
         Return True
