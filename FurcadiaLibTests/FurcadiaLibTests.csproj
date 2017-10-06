@@ -81,8 +81,6 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Net\Dream\DREAMTests.cs" />
-    <Compile Include="Net\Dream\FURRETests.cs" />
     <Compile Include="Net\NetProxyTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

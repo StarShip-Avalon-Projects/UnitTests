@@ -1,33 +1,25 @@
-﻿using NUnit.Framework;
-using Furcadia.Net;
-using FakeItEasy;
-using NUnit;
-using Furcadia.Net.Options;
+﻿using Furcadia.Net.Options;
+using Furcadia.Net.Proxy;
+using NUnit.Framework;
 
 namespace Furcadia.Net.Tests
 {
     [TestFixture()]
     public class NetProxyTests
     {
+        private NetProxy Proxy;
 
-        NetProxy Proxy;
-        ProxyOptions options;
-
-       void NetProxyInitialize()
+        private NetProxy NetProxyInitialize()
         {
-
-        }
-
-        [SetUp]
-        void SetUp()
-        {
-            options = new ProxyOptions()
+            var options = new ProxySessionOptions()
             {
                 CharacterIniFile = ""
             };
-                
-            Proxy = new NetProxy(ref options);
+            var proxy = new ProxySession(ref options);
+
+            return proxy;
         }
+
 
         /// <summary>
         /// Constructor Logic?
@@ -35,74 +27,10 @@ namespace Furcadia.Net.Tests
         [Test()]
         public void NetProxyDefaultConstructorHasNoError()
         {
-
+            Proxy = NetProxyInitialize();
 
         }
 
-     
 
-        [Test()]
-        public void ClientDisconnectTest()
-        {
-            Assert.Fail();
-        }
-
-        [Test()]
-        public void CloseClientTest()
-        {
-            Assert.Fail();
-        }
-
-        /// <summary>
-        /// check auto Port if Currently in use
-        /// </summary>
-        [Test()]
-        public void ConnectTest()
-        {
-            Assert.Fail();
-        }
-
-        [Test()]
-        public void DisconnectTest()
-        {
-            Assert.Fail();
-        }
-
-        [Test()]
-        public void SendToClientTest()
-        {
-            Assert.Fail();
-        }
-
-        [Test()]
-        public void SendToClientTest1()
-        {
-            Assert.Fail();
-        }
-
-        [Test()]
-        public void SendToServerTest()
-        {
-            Assert.Fail();
-        }
-
-        [Test()]
-        public void SendToServerTest1()
-        {
-            Assert.Fail();
-        }
-
-        [Test()]
-        public void DisposeTest()
-        {
-            Assert.Fail();
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-
-            Proxy.Dispose();
-        }
     }
 }
