@@ -81,6 +81,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Net\Dream\DREAMTests.cs" />
     <Compile Include="Net\Dream\FURRETests.cs" />
     <Compile Include="Net\NetProxyTests.cs" />

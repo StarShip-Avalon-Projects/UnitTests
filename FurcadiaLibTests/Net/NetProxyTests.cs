@@ -3,6 +3,7 @@ using Furcadia.Net;
 using FakeItEasy;
 using NUnit;
 using Furcadia.Net.Options;
+using System;
 
 namespace Furcadia.Net.Tests
 {
@@ -13,7 +14,7 @@ namespace Furcadia.Net.Tests
         NetProxy Proxy;
         ProxyOptions options;
 
-       void NetProxyInitialize()
+        void NetProxyInitialize()
         {
 
         }
@@ -25,29 +26,28 @@ namespace Furcadia.Net.Tests
             {
                 CharacterIniFile = ""
             };
-                
+
             Proxy = new NetProxy(ref options);
         }
 
-        /// <summary>
-        /// Constructor Logic?
-        /// </summary>
         [Test()]
-        public void NetProxyDefaultConstructorHasNoError()
+        public void AsyncListenerGetsDisposedExceptions()
         {
-
-
+            var IAr = new Fake<IAsyncResult>();
+            Assert.DoesNotThrow(() =>  Proxy.AsyncListener((IAsyncResult)IAr));
         }
+            
 
-     
 
         [Test()]
+        [Ignore("Not there yet")]
         public void ClientDisconnectTest()
         {
             Assert.Fail();
         }
 
         [Test()]
+        [Ignore("Not there yet")]
         public void CloseClientTest()
         {
             Assert.Fail();
@@ -57,42 +57,49 @@ namespace Furcadia.Net.Tests
         /// check auto Port if Currently in use
         /// </summary>
         [Test()]
+        [Ignore("Not there yet")]
         public void ConnectTest()
         {
             Assert.Fail();
         }
 
         [Test()]
+        [Ignore("Not there yet")]
         public void DisconnectTest()
         {
             Assert.Fail();
         }
 
         [Test()]
+        [Ignore("Not there yet")]
         public void SendToClientTest()
         {
             Assert.Fail();
         }
 
         [Test()]
+        [Ignore("Not there yet")]
         public void SendToClientTest1()
         {
             Assert.Fail();
         }
 
         [Test()]
+        [Ignore("Not there yet")]
         public void SendToServerTest()
         {
             Assert.Fail();
         }
 
         [Test()]
+        [Ignore("Not there yet")]
         public void SendToServerTest1()
         {
             Assert.Fail();
         }
 
         [Test()]
+        [Ignore("Not there yet")]
         public void DisposeTest()
         {
             Assert.Fail();
