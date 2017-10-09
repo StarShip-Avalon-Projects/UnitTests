@@ -80,9 +80,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MonkeySpeakEx\MonkeySpeakEx.csproj">
-      <Project>{925781e6-8b75-471b-887f-616495bbbfdd}</Project>
-      <Name>MonkeySpeakEx</Name>
+    <ProjectReference Include="..\..\MonkeyspeakR7\Monkeyspeak.csproj">
+      <Project>{51b6668d-9904-4fa4-8fb8-6a1395b3104d}</Project>
+      <Name>Monkeyspeak</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

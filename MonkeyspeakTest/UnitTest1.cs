@@ -39,7 +39,7 @@ namespace MonkeyspeakTest
             page.LoadSysLibrary();
             page.LoadDebugLibrary();
 
-            Monkeyspeak.Variable var = page.SetVariable("%testVariable", "Hello WOrld", true);
+            Monkeyspeak.IVariable var = page.SetVariable("%testVariable", "Hello WOrld", true);
 
             page.SetTriggerHandler(Monkeyspeak.TriggerCategory.Cause, 0, HandleAllCauses);
 
@@ -62,7 +62,7 @@ namespace MonkeyspeakTest
 
             page.LoadSysLibrary();
 
-            Monkeyspeak.Variable var = page.SetVariable("%testVariable", "Hello WOrld", true);
+            Monkeyspeak.IVariable var = page.SetVariable("%testVariable", "Hello WOrld", true);
 
             page.SetTriggerHandler(Monkeyspeak.TriggerCategory.Cause, 0, HandleAllCauses);
 
@@ -231,7 +231,7 @@ namespace MonkeyspeakTest
 
         #region Private Methods
 
-        private void DebugAllErrors(Monkeyspeak.Trigger trigger, Exception ex)
+        private void DebugAllErrors(Monkeyspeak.TriggerHandler handler,Monkeyspeak.Trigger trigger, Exception ex)
         {
             Console.WriteLine("Error with " + trigger.ToString());
 #if DEBUG
