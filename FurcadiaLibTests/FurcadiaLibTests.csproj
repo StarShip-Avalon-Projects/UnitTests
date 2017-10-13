@@ -92,6 +92,12 @@
   <ItemGroup>
     <Content Include="empty.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\furclib\FurcadiaLib.csproj">
+      <Project>{156c2af0-3da8-4d8c-a525-5400185579b3}</Project>
+      <Name>FurcadiaLib</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
