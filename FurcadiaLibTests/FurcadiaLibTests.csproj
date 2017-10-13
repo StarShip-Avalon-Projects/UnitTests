@@ -80,14 +80,9 @@
     <Compile Include="Net\Dream\DREAMTests.cs" />
     <Compile Include="Net\Dream\FURRETests.cs" />
     <Compile Include="Net\FURREListTests.cs" />
+    <Compile Include="Net\web\NetWebTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Text\Base220Tests.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\FurcLib\FurcadiaLib.csproj">
-      <Project>{156C2AF0-3DA8-4D8C-A525-5400185579B3}</Project>
-      <Name>FurcadiaLib</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -95,6 +90,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="empty.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\furclib\FurcadiaLib.csproj">
+      <Project>{156c2af0-3da8-4d8c-a525-5400185579b3}</Project>
+      <Name>FurcadiaLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
