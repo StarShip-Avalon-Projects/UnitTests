@@ -39,7 +39,7 @@ namespace MonkeyspeakTest
             page.LoadSysLibrary();
             page.LoadDebugLibrary();
 
-            Monkeyspeak.Variable var = page.SetVariable("%testVariable", "Hello WOrld", true);
+            Monkeyspeak.IVariable var = page.SetVariable("%testVariable", "Hello WOrld", true);
 
             page.SetTriggerHandler(Monkeyspeak.TriggerCategory.Cause, 0, HandleAllCauses);
 
@@ -47,7 +47,7 @@ namespace MonkeyspeakTest
             // and putting triggers into a list.
             Console.WriteLine("Trigger Count: " + page.Size);
 
-            page.Execute(0);
+            page.ExecuteAsync(0);
         }
 
         [Test]
@@ -62,7 +62,7 @@ namespace MonkeyspeakTest
 
             page.LoadSysLibrary();
 
-            Monkeyspeak.Variable var = page.SetVariable("%testVariable", "Hello WOrld", true);
+            Monkeyspeak.IVariable var = page.SetVariable("%testVariable", "Hello WOrld", true);
 
             page.SetTriggerHandler(Monkeyspeak.TriggerCategory.Cause, 0, HandleAllCauses);
 
@@ -70,7 +70,7 @@ namespace MonkeyspeakTest
             // and putting triggers into a list.
             Console.WriteLine("Trigger Count: " + page.Size);
 
-            page.Execute(0);
+            page.ExecuteAsync(0);
         }
 
         [Test]
@@ -116,7 +116,7 @@ namespace MonkeyspeakTest
             page.LoadSysLibrary();
 
             //Throws MonkeySpeak.Exception
-            page.Execute(0);
+            page.ExecuteAsync(0);
         }
 
         [Test]
@@ -231,7 +231,7 @@ namespace MonkeyspeakTest
 
         #region Private Methods
 
-        private void DebugAllErrors(Monkeyspeak.Trigger trigger, Exception ex)
+        private void DebugAllErrors(Monkeyspeak.TriggerHandler handler, Monkeyspeak.Trigger trigger, Exception ex)
         {
             Console.WriteLine("Error with " + trigger.ToString());
 #if DEBUG
