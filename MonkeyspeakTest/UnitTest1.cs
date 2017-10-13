@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MonkeyspeakTest
 {
@@ -118,7 +119,52 @@ namespace MonkeyspeakTest
             //Throws MonkeySpeak.Exception
             page.Execute(0);
         }
+       [Test()]
+        public void TestParallelExecute()
+        {
+            var ioTestString = @"
+(0:0) when the script starts,
+    (5:100) set variable %file to {test.txt}.
+    (1:200) and the file {%file} exist,
+        (5:202) delete file {%file}.
+        (5:203) create file {%file}.
 
+(0:0) when the script starts,
+        (5:102) print {%file} to the console.
+        (5:150) take variable %increment and add 1 to it.
+        (5:102) print {Execution increment %increment} to the console.
+
+(0:0) when the script starts,
+    (1:200) and the file {%file} exists,
+    (1:203) and the file {%file} can be written to,
+        (5:200) append {Hello World from Monkeyspeak %VERSION!} to file {%file}.
+
+(0:0) when the script starts,
+    (5:150) take variable %test and add 2 to it.
+    (5:102) print {%test} to the console.
+";
+
+            var engine = new Monkeyspeak.MonkeyspeakEngine
+            {
+                Options = { TriggerLimit = int.MaxValue }
+            };
+
+            var page = engine.LoadFromString(ioTestString);
+
+            page.LoadSysLibrary();
+            page.LoadIOLibrary();
+            page.LoadStringLibrary();
+            page.LoadMathLibrary();
+            page.LoadTimerLibrary();
+
+            var tasks = new Task[100];
+            for (int i = 0; i <= tasks.Length - 1; i++)
+                tasks[i] = Task.Run(async () => await page.ExecuteAsync(0));
+
+            Console.WriteLine("Page Trigger Count: " + page.Size);
+            Task.WaitAll(tasks);
+            // Result is execution is parallel! Awesome!
+        }
         [Test]
         public void GetTriggerDescriptionsTest()
         {
