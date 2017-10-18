@@ -118,7 +118,8 @@ namespace MonkeyspeakTest
             //Throws MonkeySpeak.Exception
             page.ExecuteAsync(0);
         }
-       [Test()]
+
+        [Test()]
         public void TestParallelExecute()
         {
             var ioTestString = @"
@@ -164,6 +165,7 @@ namespace MonkeyspeakTest
             Task.WaitAll(tasks);
             // Result is execution is parallel! Awesome!
         }
+
         [Test]
         public void GetTriggerDescriptionsTest()
         {
@@ -277,7 +279,7 @@ namespace MonkeyspeakTest
         #region Private Methods
 
         private void DebugAllErrors(Monkeyspeak.TriggerHandler handler, Monkeyspeak.Trigger trigger, Exception ex)
-          {
+        {
             Console.WriteLine("Error with " + trigger.ToString());
 #if DEBUG
             System.Diagnostics.Debug.WriteLine(ex.ToString());

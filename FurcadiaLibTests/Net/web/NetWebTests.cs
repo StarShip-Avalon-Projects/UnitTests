@@ -1,7 +1,5 @@
-﻿using NUnit;
+﻿using Furcadia.Net.Web;
 using NUnit.Framework;
-using Furcadia.Net.Web;
-using System.Collections.Generic;
 
 namespace FurcadiaLibTests.Net.web
 {
@@ -12,11 +10,9 @@ namespace FurcadiaLibTests.Net.web
         [TestCase("https://silvermonkey.tsprojects.org")]
         public void TestPostDataIsNotNull(string url)
         {
-          NetWeb  var = new NetWeb(url);
+            NetWeb var = new NetWeb(url);
             var list = var.PostData();
             Assert.IsNotNull(var.PostData());
-
         }
-
     }
 }

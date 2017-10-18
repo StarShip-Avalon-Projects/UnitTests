@@ -20,7 +20,6 @@ namespace Furcadia.Net.Tests
             return proxy;
         }
 
-
         /// <summary>
         /// Constructor Logic?
         /// </summary>
@@ -28,9 +27,6 @@ namespace Furcadia.Net.Tests
         public void NetProxyDefaultConstructorHasNoError()
         {
             Proxy = NetProxyInitialize();
-
         }
-
-
     }
 }
