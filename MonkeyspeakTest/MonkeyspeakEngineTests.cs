@@ -136,57 +136,5 @@ namespace Monkeyspeak.Tests
         }
 
         #endregion Private Classes
-
-        #region Public Methods
-
-        [Test()]
-        public void CompileToStreamTest()
-        {
-            throw new NotImplementedException();
-        }
-
-        [Test()]
-        public void LoadCompiledStreamTest()
-        {
-            throw new NotImplementedException();
-        }
-
-        [Test()]
-        public void LoadFromStreamTest()
-        {
-            throw new NotImplementedException();
-        }
-
-        [Test()]
-        public void LoadFromStreamTest1()
-        {
-            throw new NotImplementedException();
-        }
-
-        [Test()]
-        public void LoadFromStringTest()
-        {
-            throw new NotImplementedException();
-        }
-
-        [Test()]
-        public void LoadFromStringTest1()
-        {
-            throw new NotImplementedException();
-        }
-
-        [Test()]
-        public void MonkeyspeakEngineTest()
-        {
-            throw new NotImplementedException();
-        }
-
-        [Test()]
-        public void MonkeyspeakEngineTest1()
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion Public Methods
     }
 }
