@@ -100,7 +100,7 @@ namespace MonkeyspeakTest
         }
 
         [Test, ExpectedException(typeof(Monkeyspeak.MonkeyspeakException))]
-        public void ErrorTriggerTest()
+        public async Task ErrorTriggerTest()
         {
             var errorTestScript = @"
 (0:0) when the script starts,
@@ -116,7 +116,7 @@ namespace MonkeyspeakTest
             page.LoadSysLibrary();
 
             //Throws MonkeySpeak.Exception
-            page.ExecuteAsync(0);
+            await Task.Run(() => page.ExecuteAsync(0));
         }
 
         [Test()]
@@ -190,6 +190,11 @@ namespace MonkeyspeakTest
             return true;
         }
 
+        public bool AlwayFalse(Monkeyspeak.TriggerReader reader)
+        {
+            return false;
+        }
+
         [Test]
         public void IOLibraryTest()
         {
@@ -242,6 +247,31 @@ namespace MonkeyspeakTest
             {
                 System.Diagnostics.Debug.WriteLine(variable);
             }
+        }
+
+        [Test()]
+        public async Task TextCondkitionBlockageAsync()
+        {
+            var timerLibTestScript = @"
+(0:0) when the script starts,
+    (5:102) print {Before False} to the console.
+(1:6666) return false,
+    (5:102) print {After False} to the console.
+
+(0:300) when timer %timer goes off,
+    (5:102) print {Timer %timer went off.} to the console.
+";
+            Monkeyspeak.MonkeyspeakEngine engine = GetMonkeySpeakEngine();
+            Monkeyspeak.Page page = engine.LoadFromString(timerLibTestScript);
+
+            page.Error += DebugAllErrors;
+
+            page.LoadSysLibrary();
+            page.LoadTimerLibrary();
+            page.SetTriggerHandler(Monkeyspeak.TriggerCategory.Condition, 6666, AlwayFalse);
+            page.SetTriggerHandler(Monkeyspeak.TriggerCategory.Cause, 0, HandleAllCauses);
+            int[] ids = { 0 };
+            await Task.Run(() => page.ExecuteAsync(ids));
         }
 
         [Test]
