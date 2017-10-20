@@ -261,7 +261,7 @@ namespace MonkeyspeakTest
 (0:300) when timer %timer goes off,
     (5:102) print {Timer %timer went off.} to the console.
 ";
-            Monkeyspeak.MonkeyspeakEngine engine = GetMonkeySpeakEngine();
+            Monkeyspeak.MonkeyspeakEngine engine = GetMonkeySpeakEngine(true);
             Monkeyspeak.Page page = engine.LoadFromString(timerLibTestScript);
 
             page.Error += DebugAllErrors;
@@ -299,9 +299,13 @@ namespace MonkeyspeakTest
             System.Threading.Thread.Sleep(4000);
         }
 
-        private Monkeyspeak.MonkeyspeakEngine GetMonkeySpeakEngine()
+        private Monkeyspeak.MonkeyspeakEngine GetMonkeySpeakEngine(bool debug = false)
         {
-            return new Monkeyspeak.MonkeyspeakEngine();
+            Monkeyspeak.Options options = new Monkeyspeak.Options
+            {
+                Debug = debug
+            };
+            return new Monkeyspeak.MonkeyspeakEngine(options);
         }
 
         #endregion Public Methods
