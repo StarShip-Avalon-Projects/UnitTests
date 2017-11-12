@@ -70,12 +70,10 @@ Class TestLibrary
 
 #Region "Public Methods"
 
-    <Monkeyspeak.TriggerHandler(Monkeyspeak.TriggerCategory.Cause, 1000, "(0:1000) test cause with reflection,")>
     Shared Function TestVBReflectionTriggerHandler(reader As Monkeyspeak.TriggerReader) As Boolean 'IMPORTANT label return with As Boolean
         Return True
     End Function
 
-    <Monkeyspeak.TriggerHandler(Monkeyspeak.TriggerCategory.Effect, 1001, "(5:1001) test print {...}.")>
     Shared Function TestVBReflectionTriggerHandler2(reader As Monkeyspeak.TriggerReader) As Boolean 'IMPORTANT label return with As Boolean
         If reader.PeekString Then
             Console.WriteLine(reader.ReadString())

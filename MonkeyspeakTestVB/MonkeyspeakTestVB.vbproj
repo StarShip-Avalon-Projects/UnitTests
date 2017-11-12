@@ -131,7 +131,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\MonkeySpeakEx\Monkeyspeak.csproj">
-      <Project>{51b6668d-9904-4fa4-8fb8-6a1395b3104d}</Project>
+      <Project>{925781e6-8b75-471b-887f-616495bbbfdd}</Project>
       <Name>Monkeyspeak</Name>
     </ProjectReference>
   </ItemGroup>
