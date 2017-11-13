@@ -2,6 +2,7 @@
 using NUnit.Framework;
 
 namespace FurcadiaLibTests.Net.web
+
 {
     [TestFixture]
     public class NetWebTests
