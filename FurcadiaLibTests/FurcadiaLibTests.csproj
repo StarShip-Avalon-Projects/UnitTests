@@ -82,7 +82,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Net\NetProxyTests.cs" />
-    <Compile Include="Net\web\NetWebTests.cs" />
+    <Compile Include="Net\web\NetWebWebrequests_Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -98,6 +98,7 @@
       <Name>FurcadiaLib</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
