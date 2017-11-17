@@ -1,10 +1,11 @@
 ﻿using Furcadia.Net.Options;
 using Furcadia.Net.Proxy;
+
 using NUnit.Framework;
 
 namespace Furcadia.Net.Tests
 {
-    [TestFixture()]
+    [TestFixture]
     public class NetProxyTests
     {
         private NetProxy Proxy;
@@ -23,7 +24,7 @@ namespace Furcadia.Net.Tests
         /// <summary>
         /// Constructor Logic?
         /// </summary>
-        [Test()]
+        [Test]
         public void NetProxyDefaultConstructorHasNoError()
         {
             Proxy = NetProxyInitialize();
