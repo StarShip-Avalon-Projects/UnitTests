@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Furcadia.Net.Web;
 using NUnit.Framework;
-using Furcadia.Net.Web;
-using System.Diagnostics;
+using System;
+using System.Collections.Generic;
 
 namespace FurcadiaLibTests.Net.web
 {
