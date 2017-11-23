@@ -35,7 +35,7 @@ namespace Furcadia.Net.Tests
         private const string WhisperTest2 = "<font color='whisper'>[ <name shortname='gerolkae' src='whisper-from'>Gerolkae</name> whispers, \"Hi\" to you. ]</font>";
         private const string YouWhisper = "<font color='whisper'>[You whisper \"Logged on\" to<name shortname='gerolkae' forced src='whisper-to'>Gerolkae</name>. ]</font>";
         private const string YouShouYo = "<font color='shout'>You shout, \"Yo Its Me\"</font>";
-
+        private const string GeroShout = "<font color='shout'>{S} <name shortname='gerolkae'>Gerolkae</name> shouts: ping</font>";
         private const string Emote = "<font color='emote'><name shortname='silvermonkey'>Silver|Monkey</name> Emoe</font>";
 
         private const string Emit = "<font color='dragonspeak'><img src='fsh://system.fsh:91' alt='@emit' /><channel name='@emit' /> Silver|Monkey has arrived...</font>";
@@ -45,6 +45,7 @@ namespace Furcadia.Net.Tests
         [TestCase(WhisperTest, 5, "Gerolkae")]
         [TestCase(PingTest, 5, "Gerolkae")]
         [TestCase(YouWhisper, 4, "Silver Monkey")]
+        [TestCase(GeroShout, 5, "Gerolkae")]
         [TestCase(YouShouYo, 4, "Silver Monkey")]
         [TestCase(EmitWarning, 4, "Silver Monkey")]
         [TestCase(Emit, -1, "Unknown")]
@@ -70,6 +71,7 @@ namespace Furcadia.Net.Tests
         [TestCase(PingTest2, "Ping")]
         [TestCase(YouWhisper, "Logged on")]
         [TestCase(YouShouYo, "Yo Its Me")]
+        [TestCase(GeroShout, "ping")]
         [TestCase(EmitWarning, "(<name shortname='silvermonkey'>Silver|Monkey</name> just emitted.)")]
         [TestCase(Emit, "Silver|Monkey has arrived...")]
         [TestCase(SpokenEmit, "Blah")]
@@ -91,6 +93,7 @@ namespace Furcadia.Net.Tests
         [TestCase(WhisperTest, "whisper")]
         [TestCase(PingTest, "say")]
         [TestCase(YouShouYo, "shout")]
+        [TestCase(GeroShout, "shout")]
         [TestCase(EmitWarning, "@emit")]
         [TestCase(Emit, "@emit")]
         [TestCase(SpokenEmit, "@emit")]
