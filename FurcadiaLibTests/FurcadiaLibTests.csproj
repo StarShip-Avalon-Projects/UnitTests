@@ -76,7 +76,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Net\NetProxyTests.cs" />
-    <Compile Include="Net\web\NetWebWebrequests_Tests.cs" />
+    <None Include="Net\web\NetWebWebrequests_Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -94,6 +94,9 @@
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\packages\FakeItEasy.Analyzer.CSharp.4.1.1\analyzers\dotnet\cs\FakeItEasy.Analyzer.CSharp.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Net\Proxy\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
