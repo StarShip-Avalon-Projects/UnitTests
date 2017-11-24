@@ -34,6 +34,7 @@ namespace Furcadia.Net.Tests
         private const string PingTest2 = @"<name shortname='gerolkae'>Gerolkae</name>: Ping";
         private const string WhisperTest2 = "<font color='whisper'>[ <name shortname='gerolkae' src='whisper-from'>Gerolkae</name> whispers, \"Hi\" to you. ]</font>";
         private const string YouWhisper = "<font color='whisper'>[You whisper \"Logged on\" to<name shortname='gerolkae' forced src='whisper-to'>Gerolkae</name>. ]</font>";
+        private const string YouWhisper2 = "<font color='whisper'>[ You whisper \"Logged on\" to <name shortname='gerolkae' forced src='whisper-to'>Gerolkae</name>. ]</font>";
         private const string YouShouYo = "<font color='shout'>You shout, \"Yo Its Me\"</font>";
         private const string GeroShout = "<font color='shout'>{S} <name shortname='gerolkae'>Gerolkae</name> shouts: ping</font>";
         private const string Emote = "<font color='emote'><name shortname='silvermonkey'>Silver|Monkey</name> Emoe</font>";
@@ -45,6 +46,7 @@ namespace Furcadia.Net.Tests
         [TestCase(WhisperTest, 5, "Gerolkae")]
         [TestCase(PingTest, 5, "Gerolkae")]
         [TestCase(YouWhisper, 4, "Silver Monkey")]
+        [TestCase(YouWhisper2, 4, "Silver Monkey")]
         [TestCase(GeroShout, 5, "Gerolkae")]
         [TestCase(YouShouYo, 4, "Silver Monkey")]
         [TestCase(EmitWarning, 4, "Silver Monkey")]
@@ -70,6 +72,7 @@ namespace Furcadia.Net.Tests
         [TestCase(WhisperTest2, "Hi")]
         [TestCase(PingTest2, "Ping")]
         [TestCase(YouWhisper, "Logged on")]
+        [TestCase(YouWhisper, "Logged on")]
         [TestCase(YouShouYo, "Yo Its Me")]
         [TestCase(GeroShout, "ping")]
         [TestCase(EmitWarning, "(<name shortname='silvermonkey'>Silver|Monkey</name> just emitted.)")]
@@ -83,13 +86,14 @@ namespace Furcadia.Net.Tests
             t.ProcessServerChannelData += delegate (object sender, ParseChannelArgs Args)
             {
                 var ServeObject = (ChannelObject)sender;
-                Assert.AreEqual(ExpectedValue, ServeObject.Player.Message);
+                Assert.IsTrue(ExpectedValue == ServeObject.Player.Message);
             };
             t.ParseServerChannel(testc, false);
             t.Dispose();
         }
 
         [TestCase(YouWhisper, "whisper")]
+        [TestCase(YouWhisper2, "whisper")]
         [TestCase(WhisperTest, "whisper")]
         [TestCase(PingTest, "say")]
         [TestCase(YouShouYo, "shout")]
