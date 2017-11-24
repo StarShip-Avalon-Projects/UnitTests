@@ -1,4 +1,5 @@
-﻿using Monkeyspeak;
+﻿using NUnit.Framework;
+using Monkeyspeak;
 using Monkeyspeak.Logging;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using NUnit.Framework;
 
 namespace MonkeyspeakTests
 {
@@ -20,7 +20,6 @@ namespace MonkeyspeakTests
 (0:0) when the script is started,
     (5:250) create a table as %myTable.
     (5:100) set %hello to {hi}
-    (5:101) set %i to 0
     (5:252) with table %myTable put {%hello} in it at key {myKey1}.
     (5:252) with table %myTable put {%hello} in it at key {myKey2}.
     (5:252) with table %myTable put {%hello} in it at key {myKey3}.
@@ -28,39 +27,35 @@ namespace MonkeyspeakTests
     (5:252) with table %myTable put {%hello} in it at key {myKey5}.
     (5:252) with table %myTable put {%hello} in it at key {myKey6}.
     (5:252) with table %myTable put {%hello} in it at key {myKey7}.
-    (5:252) with table %myTable put {123} in it at key {123}.
     (6:250) for each entry in table %myTable put it into %entry,
         (5:102) print {%entry} to the console.
+        (5:150) take variable %i and add 1 to it.
         (5:102) print {%i} to the console.
     (6:454) after the loop is done,
-        (5:150) take variable %myTable[123] and add 1 to it.
-        (5:102) print {%myTable[123]} to the console.
+        (5:102) print {I'm done!} to the console.
+        (1:108) and variable %myTable is table,
+            (5:101) set %myTable[myKey1] to 123
+            (5:102) print {%myTable[myKey1]} to the console.
 
 (0:0) when the script is started,
     (5:101) set %answer to 0
     (5:101) set %life to 42
+    (5:102) print {The answer to LIFE is...} to the console.
     (6:450) while variable %answer is not %life,
         (5:150) take variable %answer and add 1 to it.
         (1:102) and variable %answer equals 21,
             (5:450) exit the current loop.
     (6:454) after the loop is done,
         (5:102) print {We may never know the answer...} to the console.
-
-(0:0) when the script is started,
-        (5:102) print {%i} to the console.
-        (5:102) print {%i} to the console.
-        (5:102) print {%i} to the console.
-        (5:102) print {%i} to the console.
-        (5:102) print {%i} to the console.
-        (5:102) print {%i} to the console.
-        (5:102) print {%i} to the console.
 ";
 
+        [Test]
         public void TestCompileToFile()
         {
+            Logger.SingleThreaded = true;
             var engine = new MonkeyspeakEngine
             {
-                Options = { TriggerLimit = int.MaxValue }
+                Options = { TriggerLimit = int.MaxValue, Debug = false }
             };
 
             var sb = new StringBuilder(testScript);
@@ -72,25 +67,32 @@ namespace MonkeyspeakTests
             }*/
             Stopwatch watch = Stopwatch.StartNew();
             var oldPage = engine.LoadFromString(sb.ToString());
+
             oldPage.AddTriggerHandler(TriggerCategory.Cause, 0, UnitTest1.HandleScriptStartCause);
+
             watch.Stop();
             Console.WriteLine($"Loaded in {watch.ElapsedMilliseconds} ms");
             Console.WriteLine($"Page Trigger Count: {oldPage.Size}");
             watch.Restart();
+
             oldPage.CompileToFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "test.msx"));
+
             watch.Stop();
             Console.WriteLine($"Compiled in {watch.ElapsedMilliseconds} ms");
             watch.Restart();
+
             var page = engine.LoadCompiledFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "test.msx"));
-            page.AddTriggerHandler(TriggerCategory.Cause, 0, UnitTest1.HandleScriptStartCause);
+            page.RemoveLibrary<MyLibrary>();
             watch.Stop();
             Console.WriteLine($"Loaded compiled in {watch.ElapsedMilliseconds} ms");
+
             page.LoadAllLibraries();
             page.RemoveLibrary<Monkeyspeak.Libraries.Debug>();
-
+            page.AddTriggerHandler(TriggerCategory.Cause, 0, UnitTest1.HandleScriptStartCause);
             Console.WriteLine("Page Trigger Count: " + page.Size);
-            page.Execute(0);
+            page.Execute();
             page.Dispose();
+            oldPage.Dispose();
         }
 
         [Test]

@@ -1,4 +1,5 @@
-﻿using Monkeyspeak;
+﻿using NUnit.Framework;
+using Monkeyspeak;
 using Monkeyspeak.Libraries;
 using Monkeyspeak.Utils;
 using Monkeyspeak.Logging;
@@ -10,10 +11,47 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using NUnit.Framework;
 
 namespace MonkeyspeakTests
 {
+    public class MyLibrary : BaseLibrary
+    {
+        public override void Initialize(params object[] args)
+        {
+            // add trigger handlers here
+            Add(TriggerCategory.Cause, 0, EntryPointForScript,
+                "(0:0) entering script here,");
+            Add(TriggerCategory.Effect, 0, FirstHandlerThatPrints,
+                "(5:0) hello!");
+
+            Add(TriggerCategory.Effect, 1, SecondHandlerTakesAString,
+                "(5:1) write {...}.");
+        }
+
+        private bool EntryPointForScript(TriggerReader reader)
+        {
+            return true; // return false stops execution of any triggers below the one that called this method
+        }
+
+        public bool FirstHandlerThatPrints(TriggerReader reader)
+        {
+            Console.WriteLine("Hello!");
+            return true; // return false stops execution of any triggers below the one that called this method
+        }
+
+        public bool SecondHandlerTakesAString(TriggerReader reader)
+        {
+            Console.WriteLine(reader.ReadString());
+            return true; // return false stops execution of any triggers below the one that called this method
+        }
+
+        public override void Unload(Page page)
+        {
+            // this is called by page.Dispose() which is not called automatically
+            // remove any unmanaged and disposable resources here or just due a ending action
+        }
+    }
+
     [TestFixture]
     public class UnitTest1
     {
@@ -170,18 +208,18 @@ namespace MonkeyspeakTests
             for (int i = 0; i < 1; i++)
             {
                 var engine = new MonkeyspeakEngine();
-                engine.Options.Debug = true;
+                engine.Options.Debug = false;
 
                 Logger.Info(tableScript);
                 Page page = engine.LoadFromString(tableScript); // replace with tableScriptMini to see results of that script
 
                 page.Error += DebugAllErrors;
-                page.SetTriggerHandler(TriggerCategory.Condition, 666, AlwaysFalseCond);
+                page.AddTriggerHandler(TriggerCategory.Condition, 666, AlwaysFalseCond);
                 page.LoadAllLibraries();
                 page.RemoveLibrary<Monkeyspeak.Libraries.Debug>();
                 page.SetVariable("%testVariable", "Hello WOrld", true);
 
-                page.SetTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
+                page.AddTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
 
                 // Trigger count created by subscribing to TriggerAdded event and putting triggers into a list.
                 Console.WriteLine("Trigger Count: " + page.Size);
@@ -208,8 +246,8 @@ namespace MonkeyspeakTests
             page.RemoveLibrary<Monkeyspeak.Libraries.Debug>();
             page.SetVariable("%testVariable", "Hello WOrld", true);
 
-            page.SetTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
-            page.SetTriggerHandler(TriggerCategory.Condition, 666, AlwaysFalseCond);
+            page.AddTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
+            page.AddTriggerHandler(TriggerCategory.Condition, 666, AlwaysFalseCond);
 
             // Trigger count created by subscribing to TriggerAdded event and putting triggers into a list.
             Console.WriteLine("Trigger Count: " + page.Size);
@@ -235,8 +273,8 @@ namespace MonkeyspeakTests
             page.RemoveLibrary<Monkeyspeak.Libraries.Debug>();
             page.SetVariable("%testVariable", "Hello WOrld", true);
 
-            page.SetTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
-            page.SetTriggerHandler(TriggerCategory.Condition, 666, AlwaysFalseCond);
+            page.AddTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
+            page.AddTriggerHandler(TriggerCategory.Condition, 666, AlwaysFalseCond);
 
             // Trigger count created by subscribing to TriggerAdded event and putting triggers into a list.
             Console.WriteLine("Trigger Count: " + page.Size);
@@ -303,7 +341,7 @@ namespace MonkeyspeakTests
 
             var var = page.SetVariable("%testVariable", "Hello WOrld", true);
 
-            page.SetTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
+            page.AddTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
 
             Console.WriteLine("Trigger Count: " + page.Size);
 
@@ -324,7 +362,7 @@ namespace MonkeyspeakTests
             page.RemoveLibrary<Monkeyspeak.Libraries.Debug>();
             page.Error += DebugAllErrors;
 
-            page.SetTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
+            page.AddTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
 
             Console.WriteLine("Trigger Count: " + page.Size);
             page.Execute(0);
@@ -349,7 +387,7 @@ namespace MonkeyspeakTests
 
             page.Error += DebugAllErrors;
 
-            page.SetTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
+            page.AddTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
 
             Console.WriteLine("Trigger Count: " + page.Size);
             var timer = Stopwatch.StartNew();
@@ -401,7 +439,7 @@ namespace MonkeyspeakTests
 
             page.Error += DebugAllErrors;
 
-            page.SetTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
+            page.AddTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
 
             Logger.Info($"Triggers: {page.Size}");
             page.Execute();
@@ -444,7 +482,7 @@ namespace MonkeyspeakTests
 
             page.Error += DebugAllErrors;
 
-            page.SetTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
+            page.AddTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
 
             Task.WaitAll(tasks);
             Logger.Info($"Triggers: {page.Size}");
@@ -498,7 +536,7 @@ namespace MonkeyspeakTests
             page.LoadAllLibraries();
             page.RemoveLibrary<Monkeyspeak.Libraries.Debug>();
 
-            page.SetTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
+            page.AddTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
 
             page.Execute(0);
             foreach (var v in page.Scope)
@@ -563,7 +601,7 @@ namespace MonkeyspeakTests
             page.LoadAllLibraries();
             page.RemoveLibrary<Monkeyspeak.Libraries.Debug>();
 
-            page.SetTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
+            page.AddTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
 
             page.Execute(0);
             System.Threading.Thread.Sleep(10000);
@@ -593,7 +631,7 @@ namespace MonkeyspeakTests
             page.LoadAllLibraries();
             page.RemoveLibrary<Monkeyspeak.Libraries.Debug>();
 
-            page.SetTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
+            page.AddTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
 
             page.Execute(0);
             System.Threading.Thread.Sleep(100);
