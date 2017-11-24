@@ -72,7 +72,7 @@ namespace MonkeyspeakTests
             }*/
             Stopwatch watch = Stopwatch.StartNew();
             var oldPage = engine.LoadFromString(sb.ToString());
-            oldPage.SetTriggerHandler(TriggerCategory.Cause, 0, UnitTest1.HandleScriptStartCause);
+            oldPage.AddTriggerHandler(TriggerCategory.Cause, 0, UnitTest1.HandleScriptStartCause);
             watch.Stop();
             Console.WriteLine($"Loaded in {watch.ElapsedMilliseconds} ms");
             Console.WriteLine($"Page Trigger Count: {oldPage.Size}");
@@ -82,7 +82,7 @@ namespace MonkeyspeakTests
             Console.WriteLine($"Compiled in {watch.ElapsedMilliseconds} ms");
             watch.Restart();
             var page = engine.LoadCompiledFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "test.msx"));
-            page.SetTriggerHandler(TriggerCategory.Cause, 0, UnitTest1.HandleScriptStartCause);
+            page.AddTriggerHandler(TriggerCategory.Cause, 0, UnitTest1.HandleScriptStartCause);
             watch.Stop();
             Console.WriteLine($"Loaded compiled in {watch.ElapsedMilliseconds} ms");
             page.LoadAllLibraries();
@@ -113,7 +113,7 @@ namespace MonkeyspeakTests
 
             var page = engine.LoadFromString(test);
 
-            page.SetTriggerHandler(TriggerCategory.Cause, 0, UnitTest1.HandleScriptStartCause);
+            page.AddTriggerHandler(TriggerCategory.Cause, 0, UnitTest1.HandleScriptStartCause);
 
             page.LoadAllLibraries();
 
@@ -158,7 +158,7 @@ namespace MonkeyspeakTests
             engine.Options.Debug = false;
             var page = engine.LoadFromString(UnitTest1.tableScript);
 
-            page.SetTriggerHandler(TriggerCategory.Cause, 0, UnitTest1.HandleScriptStartCause);
+            page.AddTriggerHandler(TriggerCategory.Cause, 0, UnitTest1.HandleScriptStartCause);
 
             page.LoadAllLibraries();
 
