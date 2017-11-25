@@ -82,7 +82,7 @@ namespace MonkeyspeakTests
             watch.Restart();
 
             var page = engine.LoadCompiledFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "test.msx"));
-            page.RemoveLibrary<MyLibrary>();
+            //page.RemoveLibrary<MyLibrary>();
             watch.Stop();
             Console.WriteLine($"Loaded compiled in {watch.ElapsedMilliseconds} ms");
 

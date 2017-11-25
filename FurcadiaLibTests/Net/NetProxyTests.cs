@@ -118,8 +118,11 @@ namespace Furcadia.Net.Tests
 
         private void OnErrorException(Exception e, object o, string text)
         {
-            Console.WriteLine($"{e.ToString()} {text}");
-            Assert.Fail();
+            if (e is ResultStateException)
+            {
+                Console.WriteLine($"{e} {text}");
+                Assert.Fail();
+            }
         }
     }
 }

@@ -14,43 +14,43 @@ using System.Threading.Tasks;
 
 namespace MonkeyspeakTests
 {
-    public class MyLibrary : BaseLibrary
-    {
-        public override void Initialize(params object[] args)
-        {
-            // add trigger handlers here
-            Add(TriggerCategory.Cause, 0, EntryPointForScript,
-                "(0:0) entering script here,");
-            Add(TriggerCategory.Effect, 0, FirstHandlerThatPrints,
-                "(5:0) hello!");
+    //public class MyLibrary : BaseLibrary
+    //{
+    //    public override void Initialize(params object[] args)
+    //    {
+    //        // add trigger handlers here
+    //        Add(TriggerCategory.Cause, 0, EntryPointForScript,
+    //            "(0:0) entering script here,");
+    //        Add(TriggerCategory.Effect, 0, FirstHandlerThatPrints,
+    //            "(5:0) hello!");
 
-            Add(TriggerCategory.Effect, 1, SecondHandlerTakesAString,
-                "(5:1) write {...}.");
-        }
+    //        Add(TriggerCategory.Effect, 1, SecondHandlerTakesAString,
+    //            "(5:1) write {...}.");
+    //    }
 
-        private bool EntryPointForScript(TriggerReader reader)
-        {
-            return true; // return false stops execution of any triggers below the one that called this method
-        }
+    //    private bool EntryPointForScript(TriggerReader reader)
+    //    {
+    //        return true; // return false stops execution of any triggers below the one that called this method
+    //    }
 
-        public bool FirstHandlerThatPrints(TriggerReader reader)
-        {
-            Console.WriteLine("Hello!");
-            return true; // return false stops execution of any triggers below the one that called this method
-        }
+    //    public bool FirstHandlerThatPrints(TriggerReader reader)
+    //    {
+    //        Console.WriteLine("Hello!");
+    //        return true; // return false stops execution of any triggers below the one that called this method
+    //    }
 
-        public bool SecondHandlerTakesAString(TriggerReader reader)
-        {
-            Console.WriteLine(reader.ReadString());
-            return true; // return false stops execution of any triggers below the one that called this method
-        }
+    //    public bool SecondHandlerTakesAString(TriggerReader reader)
+    //    {
+    //        Console.WriteLine(reader.ReadString());
+    //        return true; // return false stops execution of any triggers below the one that called this method
+    //    }
 
-        public override void Unload(Page page)
-        {
-            // this is called by page.Dispose() which is not called automatically
-            // remove any unmanaged and disposable resources here or just due a ending action
-        }
-    }
+    //    public override void Unload(Page page)
+    //    {
+    //        // this is called by page.Dispose() which is not called automatically
+    //        // remove any unmanaged and disposable resources here or just due a ending action
+    //    }
+    //}
 
     [TestFixture]
     public class UnitTest1
