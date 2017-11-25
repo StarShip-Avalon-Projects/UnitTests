@@ -18,7 +18,7 @@ namespace Furcadia.Net.Tests
             {
                 CharacterIniFile = ""
             };
-            var proxy = new ProxySession(ref options);
+            var proxy = new ProxySession(options);
             proxy.Dream.Furres.Add(new Furre(1, "John"));
             proxy.Dream.Furres.Add(new Furre(2, "Bill Nye"));
             proxy.Dream.Furres.Add(new Furre(3, "John More"));

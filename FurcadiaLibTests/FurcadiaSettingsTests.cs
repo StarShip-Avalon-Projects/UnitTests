@@ -1,12 +1,12 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace FurcadiaLibTests
 {
-    [TestClass]
-    public class UnitTest1
+    [TestFixture]
+    public class FurcadiaSettingsTests
     {
-        [TestMethod]
+        [Test]
         public void TestMethod1()
         {
         }
