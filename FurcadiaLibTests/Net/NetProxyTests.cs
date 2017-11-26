@@ -50,8 +50,8 @@ namespace Furcadia.Net.Tests
         [TestCase(GeroShout, 5, "Gerolkae")]
         [TestCase(YouShouYo, 4, "Silver Monkey")]
         [TestCase(EmitWarning, 4, "Silver Monkey")]
-        [TestCase(Emit, -1, "Unknown")]
-        [TestCase(SpokenEmit, -1, "Unknown")]
+        [TestCase(Emit, -1, "Furcadia Game Server")]
+        [TestCase(SpokenEmit, -1, "Furcadia Game Server")]
         [TestCase(Emote, 4, "Silver monkey")]
         public void Test_FurreNameIs(string testc, int ExpectedFurreID, string ExpectedValue)
         {
@@ -61,9 +61,16 @@ namespace Furcadia.Net.Tests
             {
                 var channel = Args.Channel;
                 var ServeObject = (ChannelObject)sender;
-                Assert.AreEqual(new Furre(ExpectedFurreID, ExpectedValue), ServeObject.Player);
+                Assert.That(ExpectedValue.ToFurcadiaShortName() == ServeObject.Player.ShortName);
             };
+
             t.ParseServerChannel(testc, false);
+            t.ProcessServerChannelData -= delegate (object sender, ParseChannelArgs Args)
+            {
+                var channel = Args.Channel;
+                var ServeObject = (ChannelObject)sender;
+                Assert.That(ExpectedValue.ToFurcadiaShortName() == ServeObject.Player.ShortName);
+            };
             t.Dispose();
         }
 
@@ -89,6 +96,12 @@ namespace Furcadia.Net.Tests
                 Assert.IsTrue(ExpectedValue == ServeObject.Player.Message);
             };
             t.ParseServerChannel(testc, false);
+            t.ProcessServerChannelData -= delegate (object sender, ParseChannelArgs Args)
+            {
+                var ServeObject = (ChannelObject)sender;
+                Assert.IsTrue(ExpectedValue == ServeObject.Player.Message);
+            };
+
             t.Dispose();
         }
 
@@ -109,20 +122,19 @@ namespace Furcadia.Net.Tests
             t.Error += OnErrorException;
             t.ProcessServerChannelData += delegate (object sender, ParseChannelArgs Args)
             {
-                var ServeObject = (ChannelObject)sender;
-                Assert.IsTrue(ExpectedValue == ServeObject.Channel);
+                Assert.IsTrue(ExpectedValue == Args.Channel);
             };
             t.ParseServerChannel(testc, false);
+            t.ProcessServerChannelData -= delegate (object sender, ParseChannelArgs Args)
+            {
+                Assert.IsTrue(ExpectedValue == Args.Channel);
+            };
             t.Dispose();
         }
 
         private void OnErrorException(Exception e, object o, string text)
         {
-            if (e is ResultStateException)
-            {
-                Console.WriteLine($"{e} {text}");
-                Assert.Fail();
-            }
+            Console.WriteLine($"{e} {text}");
         }
     }
 }
