@@ -233,60 +233,6 @@ namespace MonkeyspeakTests
         }
 
         [Test]
-        public void DemoTest()
-        {
-            var engine = new MonkeyspeakEngine();
-            engine.Options.Debug = true;
-            Page page = engine.LoadFromString(testScript);
-
-            page.Error += DebugAllErrors;
-
-            page.LoadAllLibraries();
-            //page.LoadDebugLibrary();
-            page.RemoveLibrary<Monkeyspeak.Libraries.Debug>();
-            page.SetVariable("%testVariable", "Hello WOrld", true);
-
-            page.AddTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
-            page.AddTriggerHandler(TriggerCategory.Condition, 666, AlwaysFalseCond);
-
-            // Trigger count created by subscribing to TriggerAdded event and putting triggers into a list.
-            Console.WriteLine("Trigger Count: " + page.Size);
-            Logger.Assert(page.Size > 0, "Page size was 0 = FAIL!");
-            page.Execute();
-            foreach (var variable in page.Scope)
-            {
-                Console.WriteLine(variable.ToString());
-            }
-        }
-
-        [Test]
-        public async Task AsyncDemoTest()
-        {
-            var engine = new MonkeyspeakEngine();
-            engine.Options.Debug = true;
-            Page page = await engine.LoadFromStringAsync(testScript);
-
-            page.Error += DebugAllErrors;
-
-            page.LoadAllLibraries();
-            //page.LoadDebugLibrary();
-            page.RemoveLibrary<Monkeyspeak.Libraries.Debug>();
-            page.SetVariable("%testVariable", "Hello WOrld", true);
-
-            page.AddTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
-            page.AddTriggerHandler(TriggerCategory.Condition, 666, AlwaysFalseCond);
-
-            // Trigger count created by subscribing to TriggerAdded event and putting triggers into a list.
-            Console.WriteLine("Trigger Count: " + page.Size);
-            Logger.Assert(page.Size > 0, "Page size was 0 = FAIL!");
-            await page.ExecuteAsync();
-            foreach (var variable in page.Scope)
-            {
-                Console.WriteLine(variable.ToString());
-            }
-        }
-
-        [Test]
         public void LexerPrint()
         {
             //using (var stream = new FileStream("testBIG.ms", FileMode.OpenOrCreate))
@@ -325,74 +271,6 @@ namespace MonkeyspeakTests
                 }
                 parser.VisitToken = null;
             }
-        }
-
-        [Test]
-        public void DebugTest()
-        {
-            var engine = new MonkeyspeakEngine();
-            Page page = engine.LoadFromString(testScript);
-
-            page.Error += DebugAllErrors;
-
-            page.LoadAllLibraries();
-            page.RemoveLibrary<Monkeyspeak.Libraries.Debug>();
-            //page.LoadDebugLibrary();
-
-            var var = page.SetVariable("%testVariable", "Hello WOrld", true);
-
-            page.AddTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
-
-            Console.WriteLine("Trigger Count: " + page.Size);
-
-            page.Execute(0);
-        }
-
-        [Test]
-        public void DurabilityParseFile()
-        {
-            var engine = new MonkeyspeakEngine();
-
-            // Set the trigger limit to int.MaxValue to prevent TriggerLimit reached exceptions
-            engine.Options.TriggerLimit = int.MaxValue;
-
-            Page page = engine.LoadFromFile("testBIG.ms");
-
-            page.LoadAllLibraries();
-            page.RemoveLibrary<Monkeyspeak.Libraries.Debug>();
-            page.Error += DebugAllErrors;
-
-            page.AddTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
-
-            Console.WriteLine("Trigger Count: " + page.Size);
-            page.Execute(0);
-            Logger.Info($"Trigger Count: {page.Size}");
-        }
-
-        [Test]
-        public async Task DurabilityParseFileAsync()
-        {
-            var engine = new MonkeyspeakEngine();
-
-            // Set the trigger limit to int.MaxValue to prevent TriggerLimit reached exceptions
-            engine.Options.TriggerLimit = int.MaxValue;
-
-            string code = File.ReadAllText("testBIG.ms");
-            Page page = await engine.LoadFromStringAsync(code);
-
-            page.Debug = true;
-
-            page.LoadAllLibraries();
-            page.RemoveLibrary<Monkeyspeak.Libraries.Debug>();
-
-            page.Error += DebugAllErrors;
-
-            page.AddTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
-
-            Console.WriteLine("Trigger Count: " + page.Size);
-            var timer = Stopwatch.StartNew();
-            await page.ExecuteAsync(0);
-            Logger.Info($"Trigger Count: {page.Size}");
         }
 
         [Test]
