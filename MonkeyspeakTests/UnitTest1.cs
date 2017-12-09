@@ -216,7 +216,7 @@ namespace MonkeyspeakTests
                 page.Error += DebugAllErrors;
                 page.AddTriggerHandler(TriggerCategory.Condition, 666, AlwaysFalseCond);
                 page.LoadAllLibraries();
-                page.RemoveLibrary<Monkeyspeak.Libraries.Debug>();
+                //   page.RemoveLibrary<Monkeyspeak.Libraries.Debug>();
                 page.SetVariable("%testVariable", "Hello WOrld", true);
 
                 page.AddTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
@@ -259,7 +259,7 @@ namespace MonkeyspeakTests
                 //parser.VisitToken = VisitTokens;
                 foreach (var triggerList in parser.Parse(lexer))
                 {
-                    Logger.Info($"New Block starting with {triggerList.First()}");
+                    Logger.Info($"New Block starting with {triggerList.()}");
                     // each triggerList instance is a new (0:###) block.
                     foreach (var trigger in triggerList)
                     {
@@ -507,7 +507,7 @@ namespace MonkeyspeakTests
             //page.Error += DebugAllErrors;
 
             page.LoadAllLibraries();
-            page.RemoveLibrary<Monkeyspeak.Libraries.Debug>();
+            // page.RemoveLibrary<Monkeyspeak.Libraries.Debug>();
 
             page.AddTriggerHandler(TriggerCategory.Cause, 0, HandleScriptStartCause);
 
