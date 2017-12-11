@@ -1,4 +1,4 @@
-﻿using Furcadia.Net.Dream;
+﻿using Furcadia.Net.DreamInfo;
 using Furcadia.Net.Options;
 using Furcadia.Net.Proxy;
 using Furcadia.Net.Utils.ServerParser;
@@ -132,9 +132,9 @@ namespace Furcadia.Net.Tests
             t.Dispose();
         }
 
-        private void OnErrorException(Exception e, object o, string text)
+        private void OnErrorException(Exception e, object o)
         {
-            Console.WriteLine($"{e} {text}");
+            Console.WriteLine($"{e} {o}");
         }
     }
 }
