@@ -1,4 +1,4 @@
-﻿using Furcadia.Net.Dream;
+﻿using Furcadia.Net.DreamInfo;
 using Furcadia.Net.Options;
 using Furcadia.Net.Proxy;
 using Furcadia.Net.Utils.ServerParser;
