@@ -14,7 +14,7 @@ namespace Furcadia.Net.Tests
 
         private ProxySession ProxySessionInitialize()
         {
-            var options = new ProxySessionOptions()
+            var options = new ProxyOptions()
             {
                 CharacterIniFile = ""
             };
