@@ -34,7 +34,7 @@ namespace Furcadia.Net.Tests
         private const string PingTest2 = @"<name shortname='gerolkae'>Gerolkae</name>: Ping";
         private const string WhisperTest2 = "<font color='whisper'>[ <name shortname='gerolkae' src='whisper-from'>Gerolkae</name> whispers, \"Hi\" to you. ]</font>";
         private const string YouWhisper = "<font color='whisper'>[You whisper \"Logged on\" to<name shortname='gerolkae' forced src='whisper-to'>Gerolkae</name>. ]</font>";
-        private const string YouWhisper2 = "<font color='whisper'>[ You whisper \"Logged on\" to <name shortname='gerolkae' forced src='whisper-to'>Gerolkae</name>. ]</font>";
+        private const string YouWhisper2 = "<font color='whisper'>[ You whisper \"Logged on2\" to <name shortname='gerolkae' forced src='whisper-to'>Gerolkae</name>. ]</font>";
         private const string YouShouYo = "<font color='shout'>You shout, \"Yo Its Me\"</font>";
         private const string GeroShout = "<font color='shout'>{S} <name shortname='gerolkae'>Gerolkae</name> shouts: ping</font>";
         private const string Emote = "<font color='emote'><name shortname='silvermonkey'>Silver|Monkey</name> Emoe</font>";
