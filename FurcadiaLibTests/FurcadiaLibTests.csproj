@@ -84,6 +84,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Net\Dream\DreamTests.cs" />
+    <Compile Include="Net\Dream\FurreTests.cs" />
     <Compile Include="Net\NetProxyTests.cs" />
     <Compile Include="FurcadiaSettingsTests.cs" />
     <None Include="Net\web\NetWebWebrequests_Tests.cs" />
@@ -100,16 +102,16 @@
     <Content Include="empty.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\furclib\FurcadiaLib.csproj">
-      <Project>{156c2af0-3da8-4d8c-a525-5400185579b3}</Project>
-      <Name>FurcadiaLib</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Net\Proxy\" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\packages\FakeItEasy.Analyzer.CSharp.4.3.0\analyzers\dotnet\cs\FakeItEasy.Analyzer.CSharp.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\FurcLib\FurcadiaLib.csproj">
+      <Project>{156c2af0-3da8-4d8c-a525-5400185579b3}</Project>
+      <Name>FurcadiaLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
