@@ -19,11 +19,11 @@ namespace Furcadia.Net.Tests
                 CharacterIniFile = ""
             };
             var proxy = new ProxySession(options);
-            proxy.Dream.Furres.Add(new Furre(1, "John"));
-            proxy.Dream.Furres.Add(new Furre(2, "Bill Nye"));
-            proxy.Dream.Furres.Add(new Furre(3, "John More"));
-            proxy.Dream.Furres.Add(new Furre(4, "Silver Monkey"));
-            proxy.Dream.Furres.Add(new Furre(5, "Gerolkae"));
+            Dream.Furres.Add(new Furre(1, "John"));
+            Dream.Furres.Add(new Furre(2, "Bill Nye"));
+            Dream.Furres.Add(new Furre(3, "John More"));
+            Dream.Furres.Add(new Furre(4, "Silver Monkey"));
+            Dream.Furres.Add(new Furre(5, "Gerolkae"));
 
             proxy.ConnectedFurre = new Furre(4, "Silver Monkey");
             return proxy;
