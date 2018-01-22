@@ -2,7 +2,7 @@
 using Furcadia.Net.DreamInfo;
 using NUnit.Framework;
 
-namespace FurcadiaLibTests.Net.Dream
+namespace FurcadiaLibTests.Net.Dreams
 {
     [TestFixture]
     public class FurreTests
