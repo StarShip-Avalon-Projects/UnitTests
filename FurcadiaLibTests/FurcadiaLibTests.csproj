@@ -25,7 +25,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\Build\Tests\Debug\</OutputPath>
+    <OutputPath>Bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -33,7 +33,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\Build\Tests\Release\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -91,12 +91,17 @@
     <Compile Include="Net\Dream\DreamTests.cs" />
     <Compile Include="Net\Dream\FurreTests.cs" />
     <Compile Include="Net\NetProxyTests.cs" />
-    <Compile Include="FurcadiaSettingsTests.cs" />
+    <Compile Include="Net\Proxy\ProvyConnectionTextx.cs" />
+    <Compile Include="utilities\Utilities.cs" />
     <None Include="Net\web\NetWebWebrequests_Tests.cs" />
+    <Compile Include="Net\Proxy\QueryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="settings.ini">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <None Include="silvermonkey.ini">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -105,9 +110,7 @@
   <ItemGroup>
     <Content Include="empty.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Net\Proxy\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Analyzer Include="..\..\packages\FakeItEasy.Analyzer.CSharp.4.3.0\analyzers\dotnet\cs\FakeItEasy.Analyzer.CSharp.dll" />
   </ItemGroup>
