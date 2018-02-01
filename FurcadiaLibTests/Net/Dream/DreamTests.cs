@@ -1,11 +1,17 @@
 ﻿using NUnit.Framework;
 using Furcadia.Net.DreamInfo;
+using static FurcadiaLibTests.Utilities;
 
 namespace FurcadiaLibTests.Net.Dreams
 {
     [TestFixture]
     public class DreamTests
     {
+        [SetUp]
+        public void Initialize()
+        {
+        }
+
         [Test]
         public void DreamIsNullcheck()
         {

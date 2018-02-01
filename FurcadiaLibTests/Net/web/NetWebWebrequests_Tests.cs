@@ -2,12 +2,18 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using static FurcadiaLibTests.Utilities;
 
 namespace FurcadiaLibTests.Net.web
 {
     [TestFixture]
     internal class NetWebWebrequests_Tests
     {
+        [SetUp]
+        public void Initialize()
+        {
+        }
+
         private WebRequests WebRequest;
 
         private void WebRequestsInitialize()

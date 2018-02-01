@@ -151,7 +151,7 @@ namespace FurcadiaLibTests.Net.Proxy
 
         public void DisconnectTests(bool StandAlone = false)
         {
-            Proxy.Disconnect();
+            Proxy.DisconnectServerAndClientStreams();
             HaltFor(CleanupDelayTime);
 
             Assert.Multiple(() =>
@@ -210,9 +210,9 @@ namespace FurcadiaLibTests.Net.Proxy
                 Assert.That(Proxy.Dream.URL,
                     !Is.EqualTo(null),
                     $"Dream URL is '{Proxy.Dream.URL}'");
-                Assert.That(Proxy.Dream.Lines,
-                    Is.GreaterThan(0),
-                    $"DragonSpeak Lines {Proxy.Dream.Lines}");
+                //Assert.That(Proxy.Dream.Lines,
+                //    Is.GreaterThan(0),
+                //    $"DragonSpeak Lines {Proxy.Dream.Lines}");
                 Assert.That(string.IsNullOrWhiteSpace(Proxy.BanishName),
                     $"BanishName is '{Proxy.BanishName}'");
                 Assert.That(Proxy.BanishList,
@@ -287,15 +287,16 @@ namespace FurcadiaLibTests.Net.Proxy
         [SetUp]
         public void Initialize()
         {
-            Furcadia.Logging.Logger.SingleThreaded = false;
-
-            var CharacterFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
+#pragma warning disable CS0618 // Obsolete, Place holder till Accounts are ready
+            var CharacterFile = Path.Combine(FurcPaths.CharacterPath,
+#pragma warning restore CS0618 // Obsolete, Place holder till Accounts are ready
                 "silvermonkey.ini");
 
             options = new ProxyOptions()
             {
                 Standalone = true,
                 CharacterIniFile = CharacterFile,
+                ResetSettingTime = 10
             };
 
             Proxy = new ProxySession(options);

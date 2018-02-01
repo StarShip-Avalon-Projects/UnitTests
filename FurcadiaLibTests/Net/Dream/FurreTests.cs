@@ -1,12 +1,18 @@
 ﻿using System;
 using Furcadia.Net.DreamInfo;
 using NUnit.Framework;
+using static FurcadiaLibTests.Utilities;
 
 namespace FurcadiaLibTests.Net.Dreams
 {
     [TestFixture]
     public class FurreTests
     {
+        [SetUp]
+        public void Initialize()
+        {
+        }
+
         [Test]
         public void FurreIsNull()
         {

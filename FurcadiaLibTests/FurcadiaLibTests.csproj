@@ -92,16 +92,14 @@
     <Compile Include="Net\Dream\FurreTests.cs" />
     <Compile Include="Net\NetProxyTests.cs" />
     <Compile Include="Net\Proxy\ProvyConnectionTextx.cs" />
+    <Compile Include="OneTimeSetupAndTearDown.cs" />
     <Compile Include="utilities\Utilities.cs" />
-    <None Include="Net\web\NetWebWebrequests_Tests.cs" />
+    <Compile Include="Net\web\NetWebWebrequests_Tests.cs" />
     <Compile Include="Net\Proxy\QueryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="settings.ini">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <None Include="silvermonkey.ini">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -109,6 +107,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="empty.txt" />
+    <Content Include="Read Me First.txt" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

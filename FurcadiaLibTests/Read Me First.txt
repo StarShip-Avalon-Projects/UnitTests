@@ -1,0 +1,12 @@
+﻿These tests are designed around Furcadia Framework For Third Party Programs.
+These components are meant for any one who wants to use .Net for Furcadia Tird-Party 
+Development. 
+
+Each test class has Initialize as the SetUp Fixture, Here is where you set the config 
+details suchs as Furcadia Character.Ini, Bot Config.bini, Monkeyspeak.ms,
+Engine and Bot options. These can be tailored to suit your needs.
+
+OneTimeSetupAndTearDown:
+This is where the Logging Options are set. Please refer to Monkeyspeak.Logging
+or Furadia.Logging. Both name spaces serve the same purpose for thier respective 
+libraries for further details.

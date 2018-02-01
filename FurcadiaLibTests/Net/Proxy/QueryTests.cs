@@ -1,4 +1,5 @@
-﻿using Furcadia.Logging;
+﻿using Furcadia.IO;
+using Furcadia.Logging;
 using Furcadia.Net;
 using Furcadia.Net.Options;
 using Furcadia.Net.Proxy;
@@ -11,7 +12,7 @@ using static FurcadiaLibTests.Utilities;
 namespace FurcadiaLibTests.Net.Proxy
 {
     [TestFixture]
-    public class QueryTests
+    public class FurcadiaQueryTests
     {
         #region Public Fields
 
@@ -83,7 +84,7 @@ namespace FurcadiaLibTests.Net.Proxy
 
         public void BotHaseDisconnected_Standalone(bool StandAlone = false)
         {
-            Proxy.Disconnect();
+            Proxy.DisconnectServerAndClientStreams();
             HaltFor(CleanupDelayTime);
 
             Assert.Multiple(() =>
@@ -171,14 +172,17 @@ namespace FurcadiaLibTests.Net.Proxy
         [SetUp]
         public void Initialize()
         {
-            Furcadia.Logging.Logger.SingleThreaded = false;
-            var CharacterFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
-                "silvermonkey.ini");
+            var furcPath = new Paths();
+#pragma warning disable CS0618 // Obsolete, Place holder till Accounts are ready
+            var CharacterFile = Path.Combine(furcPath.CharacterPath,
+#pragma warning restore CS0618 // Obsolete, Place holder till Accounts are ready
+                  "silvermonkey.ini");
 
             Options = new ProxyOptions()
             {
                 Standalone = true,
                 CharacterIniFile = CharacterFile,
+                ResetSettingTime = 10
             };
 
             Proxy = new ProxySession(Options);

@@ -130,6 +130,11 @@ namespace FurcadiaLibTests.Net.Proxy.DisconnectedTests
             Console.WriteLine($"{e} {o}");
         }
 
+        [SetUp]
+        public void Initialize()
+        {
+        }
+
         private ProxySession ProxySessionInitialize()
         {
             var options = new ProxyOptions()
