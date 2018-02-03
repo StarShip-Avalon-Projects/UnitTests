@@ -88,8 +88,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Net\Dream\DreamTests.cs" />
-    <Compile Include="Net\Dream\FurreTests.cs" />
+    <Compile Include="Net\DreamInfo\DreamTests.cs" />
+    <Compile Include="Net\DreamInfo\FurreTests.cs" />
     <Compile Include="Net\NetProxyTests.cs" />
     <Compile Include="Net\Proxy\ProvyConnectionTextx.cs" />
     <Compile Include="OneTimeSetupAndTearDown.cs" />

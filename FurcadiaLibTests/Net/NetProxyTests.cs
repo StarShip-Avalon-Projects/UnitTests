@@ -1,4 +1,5 @@
-﻿using Furcadia.Net.DreamInfo;
+﻿using Furcadia.Logging;
+using Furcadia.Net.DreamInfo;
 using Furcadia.Net.Options;
 using Furcadia.Net.Proxy;
 using Furcadia.Net.Utils.ServerParser;
@@ -28,7 +29,7 @@ namespace FurcadiaLibTests.Net.Proxy.DisconnectedTests
         private const string YouShouYo = "<font color='shout'>You shout, \"Yo Its Me\"</font>";
         private const string YouWhisper = "<font color='whisper'>[You whisper \"Logged on\" to<name shortname='gerolkae' forced src='whisper-to'>Gerolkae</name>. ]</font>";
         private const string YouWhisper2 = "<font color='whisper'>[ You whisper \"Logged on2\" to <name shortname='gerolkae' forced src='whisper-to'>Gerolkae</name>. ]</font>";
-        private ProxySession Proxy;
+        //    private ProxySession Proxy;
 
         #endregion Private Fields
 
@@ -48,7 +49,7 @@ namespace FurcadiaLibTests.Net.Proxy.DisconnectedTests
 
         {
             var t = ProxySessionInitialize();
-            t.Error += OnErrorException;
+
             t.ProcessServerChannelData += (sender, Args) =>
                Assert.IsTrue(ExpectedValue == Args.Channel);
 
@@ -74,7 +75,7 @@ namespace FurcadiaLibTests.Net.Proxy.DisconnectedTests
         public void Test_FurreMessageIs(string testc, string ExpectedValue)
         {
             var t = ProxySessionInitialize();
-            t.Error += OnErrorException;
+
             t.ProcessServerChannelData += (sender, Args) =>
            {
                var ServeObject = (ChannelObject)sender;
@@ -103,13 +104,12 @@ namespace FurcadiaLibTests.Net.Proxy.DisconnectedTests
         public void Test_FurreNameIs(string testc, int ExpectedFurreID, string ExpectedValue)
         {
             var t = ProxySessionInitialize();
-            t.Error += OnErrorException;
             t.ProcessServerChannelData += (sender, Args) =>
-           {
-               var channel = Args.Channel;
-               var ServeObject = (ChannelObject)sender;
-               Assert.That(ExpectedValue.ToFurcadiaShortName() == ServeObject.Player.ShortName);
-           };
+            {
+                var channel = Args.Channel;
+                var ServeObject = (ChannelObject)sender;
+                Assert.That(ExpectedValue.ToFurcadiaShortName() == ServeObject.Player.ShortName);
+            };
 
             t.ParseServerChannel(testc, false);
             t.ProcessServerChannelData -= (sender, Args) =>
@@ -125,11 +125,6 @@ namespace FurcadiaLibTests.Net.Proxy.DisconnectedTests
 
         #region Private Methods
 
-        private void OnErrorException(Exception e, object o)
-        {
-            Console.WriteLine($"{e} {o}");
-        }
-
         [SetUp]
         public void Initialize()
         {
@@ -142,6 +137,8 @@ namespace FurcadiaLibTests.Net.Proxy.DisconnectedTests
                 CharacterIniFile = ""
             };
             var proxy = new ProxySession(options);
+            proxy.Error += (e, o) => Logger.Error($"{e} {o}");
+
             Dream.Furres.Add(new Furre(1, "John"));
             Dream.Furres.Add(new Furre(2, "Bill Nye"));
             Dream.Furres.Add(new Furre(3, "John More"));

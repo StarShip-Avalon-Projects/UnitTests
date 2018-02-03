@@ -2,7 +2,6 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using static FurcadiaLibTests.Utilities;
 
 namespace FurcadiaLibTests.Net.web
 {
@@ -26,9 +25,11 @@ namespace FurcadiaLibTests.Net.web
         public void WebRequest_IsNotNull(string url)
         {
             WebRequestsInitialize();
-            List<IVariable> Variables = new List<IVariable>();
-            Variables.Add(new Variable("Hello"));
-            Variables.Add(new Variable("meep"));
+            List<IVariable> Variables = new List<IVariable>
+            {
+                new Variable("Hello", "there"),
+                new Variable("meep")
+            };
 
             Console.WriteLine(WebRequests.SendPostRequest(WebUtils.PrepWebData(Variables), url));
         }

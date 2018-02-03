@@ -13,7 +13,7 @@ using static FurcadiaLibTests.Utilities;
 namespace FurcadiaLibTests.Net.Proxy
 {
     [TestFixture]
-    public class ProcyConnectionTests
+    public class ProcyConnectionTests_Alt_SilverMonkey
     {
         #region Public Fields
 
@@ -48,7 +48,7 @@ namespace FurcadiaLibTests.Net.Proxy
 
         #region Public Constructors
 
-        public ProcyConnectionTests()
+        public ProcyConnectionTests_Alt_SilverMonkey()
         {
             SettingsFile = Path.Combine(FurcPaths.SettingsPath, @"settings.ini");
             BackupSettingsFile = Path.Combine(FurcPaths.SettingsPath, @"BackupSettings.ini");
@@ -60,19 +60,18 @@ namespace FurcadiaLibTests.Net.Proxy
         #region Public Properties
 
         public string BackupSettingsFile { get; private set; }
-        public ProxyOptions options { get; private set; }
+        public ProxyOptions Options { get; private set; }
         public string SettingsFile { get; private set; }
 
         #endregion Public Properties
 
         #region Public Methods
 
-        public void BotHasConnected_StandAlone(bool StandAlone = false)
+        public void BotHasConnected_StandAlone(bool StandAlone = true)
         {
             Proxy.StandAlone = StandAlone;
             Proxy.Connect();
-
-            HaltFor(ConnectWaitTime);
+            // HaltFor(ConnectWaitTime);
 
             Assert.Multiple(() =>
             {
@@ -125,15 +124,15 @@ namespace FurcadiaLibTests.Net.Proxy
         {
             BotHasConnected_StandAlone();
 
-            Proxy.ProcessServerChannelData += delegate (object sender, ParseChannelArgs Args)
-             {
-                 var ServeObject = (ChannelObject)sender;
-                 Assert.That(ServeObject.Player.Message,
-                     Is.EqualTo(ExpectedValue));
-             };
+            Proxy.ProcessServerChannelData += (sender, Args) =>
+            {
+                var ServeObject = (ChannelObject)sender;
+                Assert.That(ServeObject.Player.Message,
+                    Is.EqualTo(ExpectedValue));
+            };
 
-            Console.WriteLine($"ServerStatus: {Proxy.ServerStatus}");
-            Console.WriteLine($"ClientStatus: {Proxy.ClientStatus}");
+            Logger.Debug($"ServerStatus: {Proxy.ServerStatus}");
+            Logger.Debug($"ClientStatus: {Proxy.ClientStatus}");
             Proxy.ParseServerChannel(testc, false);
             DisconnectTests();
         }
@@ -146,13 +145,14 @@ namespace FurcadiaLibTests.Net.Proxy
             Proxy.Error -= (e, o) => Logger.Error($"{e} {o}");
 
             Proxy.Dispose();
-            options = null;
+            Options = null;
         }
 
-        public void DisconnectTests(bool StandAlone = false)
+        public void DisconnectTests()
         {
             Proxy.DisconnectServerAndClientStreams();
-            HaltFor(CleanupDelayTime);
+            if (!Proxy.StandAlone)
+                HaltFor(CleanupDelayTime);
 
             Assert.Multiple(() =>
             {
@@ -175,11 +175,12 @@ namespace FurcadiaLibTests.Net.Proxy
         }
 
         [TestCase(true)]
-        [TestCase(false)]
+        //  [TestCase(false)]
         public void DreamInfoIsSet_StandAlone(bool StandAlone)
         {
             BotHasConnected_StandAlone(StandAlone);
-            HaltFor(DreamEntranceDelay);
+            if (!Proxy.StandAlone)
+                HaltFor(DreamEntranceDelay);
 
             Assert.Multiple(() =>
             {
@@ -192,20 +193,10 @@ namespace FurcadiaLibTests.Net.Proxy
                 Assert.That(Proxy.Dream.Name,
                     !Is.EqualTo(null),
                     $"Dream Name is '{Proxy.Dream.Name}'");
-                if (Proxy.Dream.IsPermanent)
-                {
-                    Assert.That(Proxy.Dream.DreamOwner,
-                        !Is.EqualTo(null),
-                        $"Dream DreamOwner is '{Proxy.Dream.DreamOwner}'");
-                }
-                else
-                {
-                    Assert.That(Proxy.Dream.DreamOwner,
-                        !Is.EqualTo(null),
-                        $"Dream DreamOwner is '{Proxy.Dream.DreamOwner}'");
-                    //private dreams most likley to be personal or ddream packs
-                    // Dream Owner shoule be set
-                }
+
+                Assert.That(Proxy.Dream.DreamOwner,
+                    !Is.EqualTo(null),
+                    $"Dream DreamOwner is '{Proxy.Dream.DreamOwner}'");
 
                 Assert.That(Proxy.Dream.URL,
                     !Is.EqualTo(null),
@@ -222,7 +213,7 @@ namespace FurcadiaLibTests.Net.Proxy
                     Is.EqualTo(0),
                     $"BanishList is '{Proxy.BanishList.Count}'");
             });
-            DisconnectTests(StandAlone);
+            DisconnectTests();
         }
 
         //   [TestCase(YouWhisper, "whisper")]
@@ -239,14 +230,15 @@ namespace FurcadiaLibTests.Net.Proxy
         public void ExpectedChannelNameIs(string ChannelCode, string ExpectedValue)
         {
             BotHasConnected_StandAlone();
-            HaltFor(DreamEntranceDelay);
+            if (!Proxy.StandAlone)
+                HaltFor(DreamEntranceDelay);
 
-            Proxy.ProcessServerChannelData += delegate (object sender, ParseChannelArgs Args)
-            {
-                var ServeObject = (ChannelObject)sender;
-                Assert.That(Args.Channel,
-                    Is.EqualTo(ExpectedValue));
-            };
+            Proxy.ProcessServerChannelData += (sender, Args) =>
+           {
+               var ServeObject = (ChannelObject)sender;
+               Assert.That(Args.Channel,
+                   Is.EqualTo(ExpectedValue));
+           };
 
             Proxy.ParseServerChannel(ChannelCode, false);
             DisconnectTests();
@@ -272,8 +264,8 @@ namespace FurcadiaLibTests.Net.Proxy
                Assert.That(ServeObject.Player.ShortName, Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
            };
 
-            Console.WriteLine($"ServerStatus: {Proxy.ServerStatus}");
-            Console.WriteLine($"ClientStatus: {Proxy.ClientStatus}");
+            Logger.Debug($"ServerStatus: {Proxy.ServerStatus}");
+            Logger.Debug($"ClientStatus: {Proxy.ClientStatus}");
             Proxy.ParseServerChannel(testc, false);
             Proxy.ProcessServerChannelData -= (sender, Args) =>
             {
@@ -292,14 +284,14 @@ namespace FurcadiaLibTests.Net.Proxy
 #pragma warning restore CS0618 // Obsolete, Place holder till Accounts are ready
                 "silvermonkey.ini");
 
-            options = new ProxyOptions()
+            Options = new ProxyOptions()
             {
                 Standalone = true,
                 CharacterIniFile = CharacterFile,
                 ResetSettingTime = 10
             };
 
-            Proxy = new ProxySession(options);
+            Proxy = new ProxySession(Options);
             Proxy.ServerData2 += data => Proxy.SendToClient(data);
             Proxy.ClientData2 += data => Proxy.SendToServer(data);
             Proxy.Error += (e, o) => Logger.Error($"{e} {o}");
@@ -311,13 +303,13 @@ namespace FurcadiaLibTests.Net.Proxy
             BotHasConnected_StandAlone();
 
             //  Proxy.Error += OnErrorException;
-            Proxy.ProcessServerChannelData += delegate (object sender, ParseChannelArgs Args)
-            {
-                ChannelObject InstructionObject = (ChannelObject)sender;
-                Assert.That(InstructionObject.Player.Message,
-                    Is.EqualTo(ExpectedValue));
-            };
-            Task.Run(() => Proxy.SendFormattedTextToServer("- Shout")).Wait();
+            Proxy.ProcessServerChannelData += (sender, Args) =>
+           {
+               ChannelObject InstructionObject = (ChannelObject)sender;
+               Assert.That(InstructionObject.Player.Message,
+                   Is.EqualTo(ExpectedValue));
+           };
+            Proxy.SendFormattedTextToServer("- Shout");
 
             Proxy.ParseServerChannel(testc, false);
             DisconnectTests();

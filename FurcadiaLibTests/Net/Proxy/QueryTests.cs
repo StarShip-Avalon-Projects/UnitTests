@@ -40,12 +40,12 @@ namespace FurcadiaLibTests.Net.Proxy
 
         #region Public Methods
 
-        public void BotHasConnected_StandAlone(bool StandAlone = false)
+        public void BotHasConnected_StandAlone(bool StandAlone = true)
         {
             Proxy.StandAlone = StandAlone;
             Proxy.Connect();
 
-            HaltFor(ConnectWaitTime);
+            //  HaltFor(ConnectWaitTime);
 
             Assert.Multiple(() =>
             {
@@ -82,10 +82,11 @@ namespace FurcadiaLibTests.Net.Proxy
             });
         }
 
-        public void BotHaseDisconnected_Standalone(bool StandAlone = false)
+        public void BotHaseDisconnected_Standalone(bool StandAlone = true)
         {
             Proxy.DisconnectServerAndClientStreams();
-            HaltFor(CleanupDelayTime);
+            if (!Proxy.StandAlone)
+                HaltFor(CleanupDelayTime);
 
             Assert.Multiple(() =>
             {
@@ -115,7 +116,8 @@ namespace FurcadiaLibTests.Net.Proxy
         public void ChannelIsQueryOfType(string ChannelCode, string ExpectedValue)
         {
             BotHasConnected_StandAlone();
-            HaltFor(DreamEntranceDelay);
+            if (!Proxy.StandAlone)
+                HaltFor(DreamEntranceDelay);
 
             Proxy.ProcessServerChannelData += delegate (object sender, ParseChannelArgs Args)
             {
@@ -157,8 +159,8 @@ namespace FurcadiaLibTests.Net.Proxy
                 Assert.That(ServeObject.Player.ShortName, Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
             };
 
-            Console.WriteLine($"ServerStatus: {Proxy.ServerStatus}");
-            Console.WriteLine($"ClientStatus: {Proxy.ClientStatus}");
+            Logger.Debug($"ServerStatus: {Proxy.ServerStatus}");
+            Logger.Debug($"ClientStatus: {Proxy.ClientStatus}");
             Proxy.ParseServerChannel(testc, false);
             Proxy.ProcessServerChannelData -= (sender, Args) =>
             {
