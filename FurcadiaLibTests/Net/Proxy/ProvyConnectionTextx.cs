@@ -5,9 +5,7 @@ using Furcadia.Net.Options;
 using Furcadia.Net.Proxy;
 using Furcadia.Net.Utils.ServerParser;
 using NUnit.Framework;
-using System;
 using System.IO;
-using System.Threading.Tasks;
 using static FurcadiaLibTests.Utilities;
 
 namespace FurcadiaLibTests.Net.Proxy
@@ -67,7 +65,7 @@ namespace FurcadiaLibTests.Net.Proxy
 
         #region Public Methods
 
-        public void BotHasConnected_StandAlone(bool StandAlone = true)
+        public void BotHasConnected(bool StandAlone = true)
         {
             Proxy.StandAlone = StandAlone;
             Proxy.Connect();
@@ -122,8 +120,6 @@ namespace FurcadiaLibTests.Net.Proxy
         [TestCase(EmitTest, "test")]
         public void ChannelTextIs(string testc, string ExpectedValue)
         {
-            BotHasConnected_StandAlone();
-
             Proxy.ProcessServerChannelData += (sender, Args) =>
             {
                 var ServeObject = (ChannelObject)sender;
@@ -134,12 +130,12 @@ namespace FurcadiaLibTests.Net.Proxy
             Logger.Debug($"ServerStatus: {Proxy.ServerStatus}");
             Logger.Debug($"ClientStatus: {Proxy.ClientStatus}");
             Proxy.ParseServerChannel(testc, false);
-            DisconnectTests();
         }
 
         [TearDown]
         public void Cleanup()
         {
+            DisconnectTests();
             Proxy.ClientData2 -= data => Proxy.SendToServer(data);
             Proxy.ServerData2 -= data => Proxy.SendToClient(data);
             Proxy.Error -= (e, o) => Logger.Error($"{e} {o}");
@@ -150,70 +146,55 @@ namespace FurcadiaLibTests.Net.Proxy
 
         public void DisconnectTests()
         {
+            Proxy.ServerStatusChanged += (sender, e) =>
+            {
+                if (e.ConnectPhase == ConnectionPhase.Disconnected)
+                {
+                    Assert.Multiple(() =>
+                    {
+                        Assert.That(Proxy.ServerStatus,
+                             Is.EqualTo(ConnectionPhase.Disconnected),
+                            $"Proxy.ServerStatus {Proxy.ServerStatus}");
+                        Assert.That(Proxy.IsServerSocketConnected,
+                             Is.EqualTo(false),
+                            $"Proxy.IsServerSocketConnected {Proxy.IsServerSocketConnected}");
+                        Assert.That(Proxy.ClientStatus,
+                             Is.EqualTo(ConnectionPhase.Disconnected),
+                             $"Proxy.ClientStatus {Proxy.ClientStatus}");
+                        Assert.That(Proxy.IsClientSocketConnected,
+                             Is.EqualTo(false),
+                             $"Proxy.IsClientSocketConnected {Proxy.IsClientSocketConnected}");
+                        Assert.That(Proxy.FurcadiaClientIsRunning,
+                             Is.EqualTo(false),
+                            $"Proxy.FurcadiaClientIsRunning {Proxy.FurcadiaClientIsRunning}");
+                    });
+                }
+            };
             Proxy.DisconnectServerAndClientStreams();
-            if (!Proxy.StandAlone)
-                HaltFor(CleanupDelayTime);
-
-            Assert.Multiple(() =>
+            Proxy.ServerStatusChanged -= (sender, e) =>
             {
-                Assert.That(Proxy.ServerStatus,
-                     Is.EqualTo(ConnectionPhase.Disconnected),
-                    $"Proxy.ServerStatus {Proxy.ServerStatus}");
-                Assert.That(Proxy.IsServerSocketConnected,
-                     Is.EqualTo(false),
-                    $"Proxy.IsServerSocketConnected {Proxy.IsServerSocketConnected}");
-                Assert.That(Proxy.ClientStatus,
-                     Is.EqualTo(ConnectionPhase.Disconnected),
-                     $"Proxy.ClientStatus {Proxy.ClientStatus}");
-                Assert.That(Proxy.IsClientSocketConnected,
-                     Is.EqualTo(false),
-                     $"Proxy.IsClientSocketConnected {Proxy.IsClientSocketConnected}");
-                Assert.That(Proxy.FurcadiaClientIsRunning,
-                     Is.EqualTo(false),
-                    $"Proxy.FurcadiaClientIsRunning {Proxy.FurcadiaClientIsRunning}");
-            });
-        }
-
-        [TestCase(true)]
-        //  [TestCase(false)]
-        public void DreamInfoIsSet_StandAlone(bool StandAlone)
-        {
-            BotHasConnected_StandAlone(StandAlone);
-            if (!Proxy.StandAlone)
-                HaltFor(DreamEntranceDelay);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(Proxy.InDream,
-                    Is.EqualTo(true),
-                    "Bot has not joined a dream");
-                Assert.That(Proxy.Dream.Rating,
-                    !Is.EqualTo(null),
-                    $"Dream Rating is '{Proxy.Dream.Rating}'");
-                Assert.That(Proxy.Dream.Name,
-                    !Is.EqualTo(null),
-                    $"Dream Name is '{Proxy.Dream.Name}'");
-
-                Assert.That(Proxy.Dream.DreamOwner,
-                    !Is.EqualTo(null),
-                    $"Dream DreamOwner is '{Proxy.Dream.DreamOwner}'");
-
-                Assert.That(Proxy.Dream.URL,
-                    !Is.EqualTo(null),
-                    $"Dream URL is '{Proxy.Dream.URL}'");
-                //Assert.That(Proxy.Dream.Lines,
-                //    Is.GreaterThan(0),
-                //    $"DragonSpeak Lines {Proxy.Dream.Lines}");
-                Assert.That(string.IsNullOrWhiteSpace(Proxy.BanishName),
-                    $"BanishName is '{Proxy.BanishName}'");
-                Assert.That(Proxy.BanishList,
-                    !Is.EqualTo(null),
-                    $"BanishList is '{Proxy.BanishList}'");
-                Assert.That(Proxy.BanishList.Count,
-                    Is.EqualTo(0),
-                    $"BanishList is '{Proxy.BanishList.Count}'");
-            });
-            DisconnectTests();
+                if (e.ConnectPhase == ConnectionPhase.Disconnected)
+                {
+                    Assert.Multiple(() =>
+                    {
+                        Assert.That(Proxy.ServerStatus,
+                             Is.EqualTo(ConnectionPhase.Disconnected),
+                            $"Proxy.ServerStatus {Proxy.ServerStatus}");
+                        Assert.That(Proxy.IsServerSocketConnected,
+                             Is.EqualTo(false),
+                            $"Proxy.IsServerSocketConnected {Proxy.IsServerSocketConnected}");
+                        Assert.That(Proxy.ClientStatus,
+                             Is.EqualTo(ConnectionPhase.Disconnected),
+                             $"Proxy.ClientStatus {Proxy.ClientStatus}");
+                        Assert.That(Proxy.IsClientSocketConnected,
+                             Is.EqualTo(false),
+                             $"Proxy.IsClientSocketConnected {Proxy.IsClientSocketConnected}");
+                        Assert.That(Proxy.FurcadiaClientIsRunning,
+                             Is.EqualTo(false),
+                            $"Proxy.FurcadiaClientIsRunning {Proxy.FurcadiaClientIsRunning}");
+                    });
+                }
+            };
         }
 
         //   [TestCase(YouWhisper, "whisper")]
@@ -229,19 +210,27 @@ namespace FurcadiaLibTests.Net.Proxy
         [TestCase(Emote, "emote")]
         public void ExpectedChannelNameIs(string ChannelCode, string ExpectedValue)
         {
-            BotHasConnected_StandAlone();
             if (!Proxy.StandAlone)
                 HaltFor(DreamEntranceDelay);
 
             Proxy.ProcessServerChannelData += (sender, Args) =>
-           {
-               var ServeObject = (ChannelObject)sender;
-               Assert.That(Args.Channel,
-                   Is.EqualTo(ExpectedValue));
-           };
+            {
+                if (sender is ChannelObject ServeObject)
+                {
+                    Assert.That(Args.Channel,
+                        Is.EqualTo(ExpectedValue));
+                }
+            };
 
             Proxy.ParseServerChannel(ChannelCode, false);
-            DisconnectTests();
+            Proxy.ProcessServerChannelData -= (sender, Args) =>
+            {
+                if (sender is ChannelObject ServeObject)
+                {
+                    Assert.That(Args.Channel,
+                        Is.EqualTo(ExpectedValue));
+                }
+            };
         }
 
         [TestCase(WhisperTest, "Gerolkae")]
@@ -256,24 +245,26 @@ namespace FurcadiaLibTests.Net.Proxy
         [TestCase(GeroWhisperHi, "Gerolkae")]
         public void ExpectedCharachter(string testc, string ExpectedValue)
         {
-            BotHasConnected_StandAlone();
-
             Proxy.ProcessServerChannelData += (sender, Args) =>
-           {
-               var ServeObject = (ChannelObject)sender;
-               Assert.That(ServeObject.Player.ShortName, Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
-           };
+            {
+                if (sender is ChannelObject ServeObject)
+                {
+                    Assert.That(ServeObject.Player.ShortName,
+                        Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
+                }
+            };
 
-            Logger.Debug($"ServerStatus: {Proxy.ServerStatus}");
-            Logger.Debug($"ClientStatus: {Proxy.ClientStatus}");
             Proxy.ParseServerChannel(testc, false);
             Proxy.ProcessServerChannelData -= (sender, Args) =>
             {
-                var ServeObject = (ChannelObject)sender;
-                Assert.That(ServeObject.Player.ShortName,
-                    Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
+                if (sender is ChannelObject ServeObject)
+                {
+                    Assert.That(ServeObject.Player.ShortName,
+                        Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
+                }
             };
-            DisconnectTests();
+            Logger.Debug($"ServerStatus: {Proxy.ServerStatus}");
+            Logger.Debug($"ClientStatus: {Proxy.ClientStatus}");
         }
 
         [SetUp]
@@ -295,24 +286,31 @@ namespace FurcadiaLibTests.Net.Proxy
             Proxy.ServerData2 += data => Proxy.SendToClient(data);
             Proxy.ClientData2 += data => Proxy.SendToServer(data);
             Proxy.Error += (e, o) => Logger.Error($"{e} {o}");
+            BotHasConnected(Proxy.StandAlone);
         }
 
         [TestCase(GeroShout, "ping")]
         public void ProxySession_InstructionObjectPlayerIs(string testc, string ExpectedValue)
         {
-            BotHasConnected_StandAlone();
-
-            //  Proxy.Error += OnErrorException;
-            Proxy.ProcessServerChannelData += (sender, Args) =>
-           {
-               ChannelObject InstructionObject = (ChannelObject)sender;
-               Assert.That(InstructionObject.Player.Message,
-                   Is.EqualTo(ExpectedValue));
-           };
             Proxy.SendFormattedTextToServer("- Shout");
+            Proxy.ProcessServerChannelData += (sender, Args) =>
+            {
+                if (sender is ChannelObject InstructionObject)
+                {
+                    Assert.That(InstructionObject.Player.Message,
+                        Is.EqualTo(ExpectedValue));
+                }
+            };
 
             Proxy.ParseServerChannel(testc, false);
-            DisconnectTests();
+            Proxy.ProcessServerChannelData -= (sender, Args) =>
+            {
+                if (sender is ChannelObject InstructionObject)
+                {
+                    Assert.That(InstructionObject.Player.Message,
+                        Is.EqualTo(ExpectedValue));
+                }
+            };
         }
 
         #endregion Public Methods

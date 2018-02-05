@@ -91,6 +91,7 @@
     <Compile Include="Net\DreamInfo\DreamTests.cs" />
     <Compile Include="Net\DreamInfo\FurreTests.cs" />
     <Compile Include="Net\NetProxyTests.cs" />
+    <Compile Include="Net\Proxy\FurcadiaJoinDreamTests.cs" />
     <Compile Include="Net\Proxy\ProvyConnectionTextx.cs" />
     <Compile Include="OneTimeSetupAndTearDown.cs" />
     <Compile Include="utilities\Utilities.cs" />

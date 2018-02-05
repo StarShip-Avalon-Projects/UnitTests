@@ -3,6 +3,7 @@ using Furcadia.Logging;
 using Furcadia.Net;
 using Furcadia.Net.Options;
 using Furcadia.Net.Proxy;
+using Furcadia.Net.Utils.ChannelObjects;
 using Furcadia.Net.Utils.ServerParser;
 using NUnit.Framework;
 using System;
@@ -40,7 +41,7 @@ namespace FurcadiaLibTests.Net.Proxy
 
         #region Public Methods
 
-        public void BotHasConnected_StandAlone(bool StandAlone = true)
+        public void BotHasConnected(bool StandAlone = true)
         {
             Proxy.StandAlone = StandAlone;
             Proxy.Connect();
@@ -82,7 +83,7 @@ namespace FurcadiaLibTests.Net.Proxy
             });
         }
 
-        public void BotHaseDisconnected_Standalone(bool StandAlone = true)
+        public void BotHaseDisconnected(bool StandAlone = true)
         {
             Proxy.DisconnectServerAndClientStreams();
             if (!Proxy.StandAlone)
@@ -108,34 +109,42 @@ namespace FurcadiaLibTests.Net.Proxy
             });
         }
 
-        [TestCase(GeroJoinBot, "join")]
-        [TestCase(GeroFollowBot, "follow")]
-        [TestCase(GeroLeadBot, "lead")]
-        [TestCase(GeroSummonBot, "summon")]
-        [TestCase(GeroCuddleBot, "cuddle")]
-        public void ChannelIsQueryOfType(string ChannelCode, string ExpectedValue)
+        [TestCase(GeroJoinBot, QueryType.join)]
+        [TestCase(GeroFollowBot, QueryType.follow)]
+        [TestCase(GeroLeadBot, QueryType.lead)]
+        [TestCase(GeroSummonBot, QueryType.summon)]
+        [TestCase(GeroCuddleBot, QueryType.cuddle)]
+        public void ChannelIsQueryOfType(string ChannelCode, QueryType ExpectedValue)
         {
-            BotHasConnected_StandAlone();
-            if (!Proxy.StandAlone)
-                HaltFor(DreamEntranceDelay);
-
-            Proxy.ProcessServerChannelData += delegate (object sender, ParseChannelArgs Args)
+            Proxy.ProcessServerChannelData += (sender, Args) =>
             {
-                Assert.Multiple(() =>
-                {
-                    var ServeObject = (ChannelObject)sender;
-                    Assert.That(Args.Channel,
-                        Is.EqualTo("query"));
-                });
+                if (sender is QueryChannelObject)
+                    Assert.Multiple(() =>
+                    {
+                        var queryObject = (QueryChannelObject)sender;
+                        Assert.That(queryObject.Query,
+                            Is.EqualTo(ExpectedValue));
+                    });
             };
 
             Proxy.ParseServerChannel(ChannelCode, false);
-            BotHaseDisconnected_Standalone();
+
+            Proxy.ProcessServerChannelData -= (sender, Args) =>
+            {
+                if (sender is QueryChannelObject)
+                    Assert.Multiple(() =>
+                    {
+                        var queryObject = (QueryChannelObject)sender;
+                        Assert.That(queryObject.Query,
+                            Is.EqualTo(ExpectedValue));
+                    });
+            };
         }
 
-        [TearDown]
+        [OneTimeTearDown]
         public void Cleanup()
         {
+            BotHaseDisconnected();
             Proxy.ClientData2 -= (data) => Proxy.SendToServer(data);
             Proxy.ServerData2 -= (data) => Proxy.SendToClient(data);
             Proxy.Error -= (e, o) => Logger.Error($"{e} {o}");
@@ -151,12 +160,13 @@ namespace FurcadiaLibTests.Net.Proxy
         [TestCase(GeroCuddleBot, "Gerolkae")]
         public void ExpectedQueryCharacter(string testc, string ExpectedValue)
         {
-            BotHasConnected_StandAlone();
-
             Proxy.ProcessServerChannelData += (sender, Args) =>
             {
-                var ServeObject = (ChannelObject)sender;
-                Assert.That(ServeObject.Player.ShortName, Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
+                if (sender is QueryChannelObject queryObject)
+                {
+                    Assert.That(queryObject.Player.ShortName,
+                        Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
+                }
             };
 
             Logger.Debug($"ServerStatus: {Proxy.ServerStatus}");
@@ -164,14 +174,15 @@ namespace FurcadiaLibTests.Net.Proxy
             Proxy.ParseServerChannel(testc, false);
             Proxy.ProcessServerChannelData -= (sender, Args) =>
             {
-                var ServeObject = (ChannelObject)sender;
-                Assert.That(ServeObject.Player.ShortName,
-                    Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
+                if (sender is QueryChannelObject queryObject)
+                {
+                    Assert.That(queryObject.Player.ShortName,
+                        Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
+                }
             };
-            BotHaseDisconnected_Standalone();
         }
 
-        [SetUp]
+        [OneTimeSetUp]
         public void Initialize()
         {
             var furcPath = new Paths();
@@ -191,6 +202,8 @@ namespace FurcadiaLibTests.Net.Proxy
             Proxy.ClientData2 += (data) => Proxy.SendToServer(data);
             Proxy.ServerData2 += (data) => Proxy.SendToClient(data);
             Proxy.Error += (e, o) => Logger.Error($"{e} {o}");
+
+            BotHasConnected();
         }
 
         #endregion Public Methods

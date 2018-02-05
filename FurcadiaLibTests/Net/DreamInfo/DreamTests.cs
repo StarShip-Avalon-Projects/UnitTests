@@ -66,9 +66,9 @@ namespace FurcadiaLibTests.Net.Dreams
                 Assert.That(TestDream.Title, Is.EqualTo(DreamTitle.ToFurcadiaShortName()), $"Dream Owner: {TestDream.Title}");
                 Assert.That(TestDream.DreamOwner, Is.EqualTo(DreamOwner.ToFurcadiaShortName()), $"Dream Title: {TestDream.DreamOwner}");
                 if (string.IsNullOrWhiteSpace(DreamTitle))
-                    Assert.That(TestDream.URL, Is.EqualTo($"furc://{DreamOwner.ToFurcadiaShortName()}/"), $"Dream URL {TestDream.URL}");
+                    Assert.That(TestDream.DreamUrl, Is.EqualTo($"furc://{DreamOwner.ToFurcadiaShortName()}/"), $"Dream URL {TestDream.DreamUrl}");
                 else
-                    Assert.That(TestDream.URL, Is.EqualTo($"furc://{DreamOwner.ToFurcadiaShortName()}:{DreamTitle.ToFurcadiaShortName()}/"), $"Dream URL {TestDream.URL}");
+                    Assert.That(TestDream.DreamUrl, Is.EqualTo($"furc://{DreamOwner.ToFurcadiaShortName()}:{DreamTitle.ToFurcadiaShortName()}/"), $"Dream URL {TestDream.DreamUrl}");
             });
         }
 
@@ -111,7 +111,7 @@ namespace FurcadiaLibTests.Net.Dreams
                 };
                 Dream2 = new Dream()
                 {
-                    DreamOwner = "boo"
+                    DreamOwner = "Boo"
                 };
                 Assert.That(Dream1, Is.EqualTo(Dream2), $"F1 {Dream1} == F2 {Dream2}");
                 Dream1 = new Dream()
@@ -120,7 +120,7 @@ namespace FurcadiaLibTests.Net.Dreams
                 };
                 Dream2 = new Dream()
                 {
-                    Title = "boo"
+                    Title = "Boo"
                 };
                 Assert.That(Dream1, Is.EqualTo(Dream2), $"F1 {Dream1} == F2 {Dream2}");
 
