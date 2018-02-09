@@ -13,6 +13,17 @@ namespace FurcadiaLibTests.Net.Proxy
     [TestFixture]
     public class FurcadiaJoinDreamTests
     {
+        [OneTimeSetUp]
+        public void OnewTimeSetup()
+        {
+            Logger.InfoEnabled = true;
+            Logger.SuppressSpam = false;
+            Logger.ErrorEnabled = true;
+            Logger.WarningEnabled = true;
+            Logger.SingleThreaded = true;
+            Logger.LogOutput = new MultiLogOutput(new FileLogOutput(Level.Debug), new FileLogOutput(Level.Error));
+        }
+
         #region Public Fields
 
         public Paths FurcPaths = new Paths();
