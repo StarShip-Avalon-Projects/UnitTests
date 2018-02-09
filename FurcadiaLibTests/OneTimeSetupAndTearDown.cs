@@ -11,7 +11,12 @@ namespace FurcadiaLibTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            SetLogger();
+            Logger.InfoEnabled = true;
+            Logger.SuppressSpam = false;
+            Logger.ErrorEnabled = true;
+            Logger.WarningEnabled = true;
+            Logger.SingleThreaded = true;
+            Logger.LogOutput = new MultiLogOutput(new FileLogOutput(Level.Debug), new FileLogOutput(Level.Error));
         }
 
         [OneTimeTearDown]
