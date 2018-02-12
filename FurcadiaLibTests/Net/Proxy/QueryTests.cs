@@ -118,10 +118,9 @@ namespace FurcadiaLibTests.Net.Proxy
         {
             Proxy.ProcessServerChannelData += (sender, Args) =>
             {
-                if (sender is QueryChannelObject)
+                if (sender is QueryChannelObject queryObject)
                     Assert.Multiple(() =>
                     {
-                        var queryObject = (QueryChannelObject)sender;
                         Assert.That(queryObject.Query,
                             Is.EqualTo(ExpectedValue));
                     });
