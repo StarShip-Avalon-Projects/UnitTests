@@ -14,7 +14,7 @@ namespace FurcadiaLibTests
         public const int DreamEntranceDelay = 10;
         public const int CleanupDelayTime = 5;
 
-        public static void HaltFor(int seconds)
+        public static void HaltFor(double seconds)
         {
             DateTime end = DateTime.Now + TimeSpan.FromSeconds(seconds);
             while (true)

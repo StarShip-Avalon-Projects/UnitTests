@@ -11,6 +11,7 @@ using static FurcadiaLibTests.Utilities;
 namespace FurcadiaLibTests.Net.Proxy
 {
     [TestFixture]
+    [NonParallelizable]
     public class ProcyConnectionTests_Alt_SilverMonkey
     {
         #region Public Fields
@@ -122,14 +123,19 @@ namespace FurcadiaLibTests.Net.Proxy
         {
             Proxy.ProcessServerChannelData += (sender, Args) =>
             {
-                var ServeObject = (ChannelObject)sender;
-                Assert.That(ServeObject.Player.Message,
-                    Is.EqualTo(ExpectedValue));
+                if (sender is ChannelObject ServeObject)
+                    Assert.That(ServeObject.Player.Message,
+                        Is.EqualTo(ExpectedValue));
             };
-
+            Proxy.ParseServerChannel(testc, false);
+            Proxy.ProcessServerChannelData -= (sender, Args) =>
+            {
+                if (sender is ChannelObject ServeObject)
+                    Assert.That(ServeObject.Player.Message,
+                        Is.EqualTo(ExpectedValue));
+            };
             Logger.Debug($"ServerStatus: {Proxy.ServerStatus}");
             Logger.Debug($"ClientStatus: {Proxy.ClientStatus}");
-            Proxy.ParseServerChannel(testc, false);
         }
 
         [TearDown]
@@ -210,8 +216,8 @@ namespace FurcadiaLibTests.Net.Proxy
         [TestCase(Emote, "emote")]
         public void ExpectedChannelNameIs(string ChannelCode, string ExpectedValue)
         {
-            if (!Proxy.StandAlone)
-                HaltFor(DreamEntranceDelay);
+            //if (!Proxy.StandAlone)
+            //    HaltFor(DreamEntranceDelay);
 
             Proxy.ProcessServerChannelData += (sender, Args) =>
             {

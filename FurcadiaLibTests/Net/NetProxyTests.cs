@@ -13,6 +13,7 @@ using System;
 namespace FurcadiaLibTests.Net.Proxy.DisconnectedTests
 {
     [TestFixture]
+    [NonParallelizable]
     public class NetProxyTests : ProxySession
     {
         #region Private Fields

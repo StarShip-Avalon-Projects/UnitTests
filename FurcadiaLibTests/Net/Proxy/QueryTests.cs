@@ -13,15 +13,16 @@ using static FurcadiaLibTests.Utilities;
 namespace FurcadiaLibTests.Net.Proxy
 {
     [TestFixture]
+    [NonParallelizable]
     public class FurcadiaQueryTests
     {
         #region Public Fields
 
         public const string GeroCuddleBot = "<font color='query'><name shortname='gerolkae'>Gerolkae</name> asks you to cuddle with them. To accept the request, <a href='command://cuddle'>click here</a> or type `cuddle and press &lt;enter&gt;.</font>";
-        public const string GeroFollowBot = "<font color='query'><name shortname='gerolkae'>Gerolkae</name> requests permission to follow you. To accept the request, <a href='command://lead'>click here</a> or type `lead and press &lt;enter&gt;.</font>";
-        public const string GeroJoinBot = "<font color='query'><name shortname='gerolkae'>Gerolkae</name> requests permission to join your company. To accept the request, <a href='command://summon'>click here</a> or type `summon and press &lt;enter&gt;.</font>";
-        public const string GeroLeadBot = "<font color='query'><name shortname='gerolkae'>Gerolkae</name> requests permission to lead you. To accept the request, <a href='command://follow'>click here</a> or type `follow and press &lt;enter&gt;.</font>";
-        public const string GeroSummonBot = "<font color='query'><name shortname='gerolkae'>Gerolkae</name> asks you to join their company in <b>the dream of Silver|Monkey</b>. To accept the request, <a href='command://join'>click here</a> or type `join and press &lt;enter&gt;.</font>";
+        public const string JoeFollowBot = "<font color='query'><name shortname='joewilkins'>Joe Wilkins</name> requests permission to follow you. To accept the request, <a href='command://lead'>click here</a> or type `lead and press &lt;enter&gt;.</font>";
+        public const string BillJoinBot = "<font color='query'><name shortname='billsanders'>Bill Sanders</name> requests permission to join your company. To accept the request, <a href='command://summon'>click here</a> or type `summon and press &lt;enter&gt;.</font>";
+        public const string AngelLeadBot = "<font color='query'><name shortname='angel'>Angel</name> requests permission to lead you. To accept the request, <a href='command://follow'>click here</a> or type `follow and press &lt;enter&gt;.</font>";
+        public const string ProteusSummonBot = "<font color='query'><name shortname='proteus'>Proteus</name> asks you to join their company in <b>the dream of Silver|Monkey</b>. To accept the request, <a href='command://join'>click here</a> or type `join and press &lt;enter&gt;.</font>";
 
         #endregion Public Fields
 
@@ -109,38 +110,47 @@ namespace FurcadiaLibTests.Net.Proxy
             });
         }
 
-        [TestCase(GeroJoinBot, QueryType.join)]
-        [TestCase(GeroFollowBot, QueryType.follow)]
-        [TestCase(GeroLeadBot, QueryType.lead)]
-        [TestCase(GeroSummonBot, QueryType.summon)]
-        [TestCase(GeroCuddleBot, QueryType.cuddle)]
-        public void ChannelIsQueryOfType(string ChannelCode, QueryType ExpectedValue)
+        private object qLock = new object();
+
+        [NonParallelizable]
+        [TestCase(BillJoinBot, QueryType.join, "Bill Sanders")]
+        [TestCase(JoeFollowBot, QueryType.follow, "Joe Wilkins")]
+        [TestCase(AngelLeadBot, QueryType.lead, "Angel")]
+        [TestCase(ProteusSummonBot, QueryType.summon, "Proteus")]
+        [TestCase(GeroCuddleBot, QueryType.cuddle, "Gerolkae")]
+        public void ChannelIsQueryOfType(string ChannelCode, QueryType ExpectedValue, string ExpectedName)
         {
-            Proxy.ProcessServerChannelData += (sender, Args) =>
+            lock (qLock)
             {
-                if (sender is QueryChannelObject queryObject)
-                    Assert.Multiple(() =>
-                    {
-                        Assert.That(queryObject.Query,
-                            Is.EqualTo(ExpectedValue));
-                    });
-            };
+                Proxy.ProcessServerChannelData += (sender, Args) =>
+                {
+                    if (sender is QueryChannelObject queryObject)
+                        Assert.Multiple(() =>
+                        {
+                            Assert.That(queryObject.Query,
+                                Is.EqualTo(ExpectedValue), queryObject.ToString());
+                            Assert.That(queryObject.Player.ShortName,
+                                Is.EqualTo(ExpectedName.ToFurcadiaShortName()), queryObject.ToString());
+                        });
+                };
 
-            Proxy.ParseServerChannel(ChannelCode, false);
+                Proxy.ParseServerChannel(ChannelCode, false);
 
-            Proxy.ProcessServerChannelData -= (sender, Args) =>
-            {
-                if (sender is QueryChannelObject)
-                    Assert.Multiple(() =>
-                    {
-                        var queryObject = (QueryChannelObject)sender;
-                        Assert.That(queryObject.Query,
-                            Is.EqualTo(ExpectedValue));
-                    });
-            };
+                Proxy.ProcessServerChannelData -= (sender, Args) =>
+                {
+                    if (sender is QueryChannelObject queryObject)
+                        Assert.Multiple(() =>
+                        {
+                            Assert.That(queryObject.Query,
+                                Is.EqualTo(ExpectedValue), queryObject.ToString());
+                            Assert.That(queryObject.Player.ShortName,
+                                Is.EqualTo(ExpectedName.ToFurcadiaShortName()), queryObject.ToString());
+                        });
+                };
+            }
         }
 
-        [OneTimeTearDown]
+        [TearDown]
         public void Cleanup()
         {
             BotHaseDisconnected();
@@ -152,36 +162,7 @@ namespace FurcadiaLibTests.Net.Proxy
             Options = null;
         }
 
-        [TestCase(GeroJoinBot, "Gerolkae")]
-        [TestCase(GeroFollowBot, "Gerolkae")]
-        [TestCase(GeroLeadBot, "Gerolkae")]
-        [TestCase(GeroSummonBot, "Gerolkae")]
-        [TestCase(GeroCuddleBot, "Gerolkae")]
-        public void ExpectedQueryCharacter(string testc, string ExpectedValue)
-        {
-            Proxy.ProcessServerChannelData += (sender, Args) =>
-            {
-                if (sender is QueryChannelObject queryObject)
-                {
-                    Assert.That(queryObject.Player.ShortName,
-                        Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
-                }
-            };
-
-            Logger.Debug($"ServerStatus: {Proxy.ServerStatus}");
-            Logger.Debug($"ClientStatus: {Proxy.ClientStatus}");
-            Proxy.ParseServerChannel(testc, false);
-            Proxy.ProcessServerChannelData -= (sender, Args) =>
-            {
-                if (sender is QueryChannelObject queryObject)
-                {
-                    Assert.That(queryObject.Player.ShortName,
-                        Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
-                }
-            };
-        }
-
-        [OneTimeSetUp]
+        [SetUp]
         public void Initialize()
         {
             var furcPath = new Paths();
