@@ -65,10 +65,10 @@
     <Compile Include="Net\NetProxyTests.cs" />
     <Compile Include="Net\Proxy\FurcadiaJoinDreamTests.cs" />
     <Compile Include="Net\Proxy\ProvyConnectionTextx.cs" />
+    <Compile Include="Net\Proxy\QueryTests.cs" />
+    <Compile Include="Net\web\NetWebWebrequests_Tests.cs" />
     <Compile Include="OneTimeSetupAndTearDown.cs" />
     <Compile Include="utilities\Utilities.cs" />
-    <Compile Include="Net\web\NetWebWebrequests_Tests.cs" />
-    <Compile Include="Net\Proxy\QueryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="settings.ini">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
