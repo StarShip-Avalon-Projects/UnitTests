@@ -44,7 +44,6 @@
     <Compile Include="Net\DirectConnection\QueryTests.cs" />
     <Compile Include="Net\web\NetWebWebrequests_Tests.cs" />
     <Compile Include="OneTimeSetupAndTearDown.cs" />
-    <Compile Include="TestClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="utilities\Utilities.cs" />
   </ItemGroup>
