@@ -87,8 +87,8 @@ namespace FurcadiaLibTests.Net.Proxy
         public void BotHaseDisconnected(bool StandAlone = true)
         {
             Proxy.DisconnectServerAndClientStreams();
-            if (!Proxy.StandAlone)
-                HaltFor(CleanupDelayTime);
+            //if (!Proxy.StandAlone)
+            //    HaltFor(CleanupDelayTime);
 
             Assert.Multiple(() =>
             {

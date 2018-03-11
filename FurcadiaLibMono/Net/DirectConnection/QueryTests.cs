@@ -5,7 +5,9 @@ using Furcadia.Net.DirectConnection;
 using Furcadia.Net.Options;
 using Furcadia.Net.Utils.ChannelObjects;
 using NUnit.Framework;
+using System;
 using System.IO;
+using static FurcadiaLibMono.Utilities;
 
 namespace FurcadiaLibMono.Net.Proxy
 {
@@ -40,7 +42,7 @@ namespace FurcadiaLibMono.Net.Proxy
         {
             Client.Connect();
 
-            //  HaltFor(ConnectWaitTime);
+            HaltFor(ClientConnectWaitTime);
 
             Assert.Multiple(() =>
             {
@@ -123,15 +125,8 @@ namespace FurcadiaLibMono.Net.Proxy
         [SetUp]
         public void Initialize()
         {
-            var furcPath = new Paths();
-#pragma warning disable CS0618 // Obsolete, Place holder till Accounts are ready
-            var CharacterFile = Path.Combine(furcPath.CharacterPath,
-#pragma warning restore CS0618 // Obsolete, Place holder till Accounts are ready
-                  "silvermonkey.ini");
-
-            Options = new ClientOptions()
-            {
-            };
+            var Character = new IniParser();
+            Options = Character.LoadOptionsFromIni(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "dbugger.ini"));
 
             Client = new NetConnection(Options);
 

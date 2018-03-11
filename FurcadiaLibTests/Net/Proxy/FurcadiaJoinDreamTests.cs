@@ -5,6 +5,7 @@ using Furcadia.Net.Options;
 using Furcadia.Net.Proxy;
 using Furcadia.Net.Utils.ServerParser;
 using NUnit.Framework;
+using System;
 using System.IO;
 using static FurcadiaLibTests.Utilities;
 
@@ -21,7 +22,7 @@ namespace FurcadiaLibTests.Net.Proxy
             Logger.ErrorEnabled = true;
             Logger.WarningEnabled = true;
             Logger.SingleThreaded = true;
-            Logger.LogOutput = new MultiLogOutput(new FileLogOutput(Level.Debug), new FileLogOutput(Level.Error));
+            Logger.LogOutput = new MultiLogOutput(new FileLogOutput(AppDomain.CurrentDomain.BaseDirectory, Level.Debug), new FileLogOutput(AppDomain.CurrentDomain.BaseDirectory, Level.Error));
         }
 
         #region Public Fields
@@ -81,7 +82,7 @@ namespace FurcadiaLibTests.Net.Proxy
         {
             Proxy.StandAlone = StandAlone;
             Proxy.Connect();
-            // HaltFor(ConnectWaitTime);
+            HaltFor(ConnectWaitTime);
 
             Assert.Multiple(() =>
             {

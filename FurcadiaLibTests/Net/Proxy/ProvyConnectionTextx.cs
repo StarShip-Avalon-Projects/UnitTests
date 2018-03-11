@@ -12,7 +12,7 @@ namespace FurcadiaLibTests.Net.Proxy
 {
     [TestFixture]
     [NonParallelizable]
-    public class ProcyConnectionTests_Alt_SilverMonkey
+    public class ProxyConnectionTests_Alt_SilverMonkey
     {
         #region Public Fields
 
@@ -47,7 +47,7 @@ namespace FurcadiaLibTests.Net.Proxy
 
         #region Public Constructors
 
-        public ProcyConnectionTests_Alt_SilverMonkey()
+        public ProxyConnectionTests_Alt_SilverMonkey()
         {
             SettingsFile = Path.Combine(FurcPaths.SettingsPath, @"settings.ini");
             BackupSettingsFile = Path.Combine(FurcPaths.SettingsPath, @"BackupSettings.ini");
@@ -216,9 +216,6 @@ namespace FurcadiaLibTests.Net.Proxy
         [TestCase(Emote, "emote")]
         public void ExpectedChannelNameIs(string ChannelCode, string ExpectedValue)
         {
-            //if (!Proxy.StandAlone)
-            //    HaltFor(DreamEntranceDelay);
-
             Proxy.ProcessServerChannelData += (sender, Args) =>
             {
                 if (sender is ChannelObject ServeObject)

@@ -5,6 +5,7 @@ using Furcadia.Net.DirectConnection;
 using Furcadia.Net.Options;
 using Furcadia.Net.Utils.ServerParser;
 using NUnit.Framework;
+using System;
 using System.IO;
 using static FurcadiaLibMono.Utilities;
 
@@ -21,7 +22,7 @@ namespace FurcadiaLibMono.Net.DirectConnection
             Logger.ErrorEnabled = true;
             Logger.WarningEnabled = true;
             Logger.SingleThreaded = true;
-            Logger.LogOutput = new MultiLogOutput(new FileLogOutput(Level.Debug), new FileLogOutput(Level.Error));
+            Logger.LogOutput = new MultiLogOutput(new FileLogOutput(AppDomain.CurrentDomain.BaseDirectory, Level.Debug), new FileLogOutput(AppDomain.CurrentDomain.BaseDirectory, Level.Error));
         }
 
         #region Private Fields
@@ -52,22 +53,19 @@ namespace FurcadiaLibMono.Net.DirectConnection
         [SetUp]
         public void Initialize()
         {
-            var Options = new ClientOptions()
-            {
-                CharacterName = "D-bugger",
-                Password = "T8fok13dx"
-            };
+            var Character = new IniParser();
+            var Options = Character.LoadOptionsFromIni(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "dbugger.ini"));
 
             Client = new NetConnection(Options);
 
             Client.Error += (e, o) => Logger.Error($"{e} {o}");
-            BotHasConnected();
+            ClientHasConnected();
         }
 
-        public void BotHasConnected(bool StandAlone = true)
+        public void ClientHasConnected()
         {
             Client.Connect();
-            HaltFor(5);
+            HaltFor(ClientConnectWaitTime);
 
             Assert.Multiple((() =>
             {

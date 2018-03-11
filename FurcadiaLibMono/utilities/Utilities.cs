@@ -10,6 +10,7 @@ namespace FurcadiaLibMono
 {
     public class Utilities
     {
+        public const int ClientConnectWaitTime = 5;
         public const int ConnectWaitTime = 10;
         public const int DreamEntranceDelay = 10;
         public const int CleanupDelayTime = 5;

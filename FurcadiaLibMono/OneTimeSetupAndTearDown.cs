@@ -1,5 +1,6 @@
 ﻿using Furcadia.Logging;
 using NUnit.Framework;
+using System;
 
 namespace FurcadiaLibMono
 {
@@ -14,7 +15,7 @@ namespace FurcadiaLibMono
             Logger.ErrorEnabled = true;
             Logger.WarningEnabled = true;
             Logger.SingleThreaded = true;
-            Logger.LogOutput = new MultiLogOutput(new FileLogOutput(Level.Debug), new FileLogOutput(Level.Error));
+            Logger.LogOutput = new MultiLogOutput(new FileLogOutput(AppDomain.CurrentDomain.BaseDirectory, Level.Debug), new FileLogOutput(AppDomain.CurrentDomain.BaseDirectory, Level.Error));
         }
 
         [OneTimeTearDown]

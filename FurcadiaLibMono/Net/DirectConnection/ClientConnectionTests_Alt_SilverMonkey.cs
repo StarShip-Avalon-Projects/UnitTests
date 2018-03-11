@@ -5,7 +5,9 @@ using Furcadia.Net.DirectConnection;
 using Furcadia.Net.Options;
 using Furcadia.Net.Utils.ServerParser;
 using NUnit.Framework;
+using System;
 using System.IO;
+using static FurcadiaLibMono.Utilities;
 
 namespace FurcadiaLibMono.Net.DirectConnection
 {
@@ -39,7 +41,7 @@ namespace FurcadiaLibMono.Net.DirectConnection
         //  private const string YouWhisper = "<font color='whisper'>[You whisper \"Logged on\" to<name shortname='gerolkae' forced src='whisper-to'>Gerolkae</name>. ]</font>";
         private const string YouWhisper2 = "<font color='whisper'>[ You whisper \"Logged on\" to <name shortname='gerolkae' forced src='whisper-to'>Gerolkae</name>. ]</font>";
 
-        private NetConnection Proxy;
+        private NetConnection Client;
 
         #endregion Private Fields
 
@@ -51,19 +53,19 @@ namespace FurcadiaLibMono.Net.DirectConnection
 
         #region Public Methods
 
-        public void BotHasConnected()
+        public void ClientHasConnected()
         {
-            Proxy.Connect();
-            // HaltFor(ConnectWaitTime);
+            Client.Connect();
+            HaltFor(ClientConnectWaitTime);
 
             Assert.Multiple(() =>
             {
-                Assert.That(Proxy.ServerStatus,
+                Assert.That(Client.ServerStatus,
                     Is.EqualTo(ConnectionPhase.Connected),
-                    $"Proxy.ServerStatus {Proxy.ServerStatus}");
-                Assert.That(Proxy.IsServerSocketConnected,
+                    $"Client.ServerStatus {Client.ServerStatus}");
+                Assert.That(Client.IsServerSocketConnected,
                     Is.EqualTo(true),
-                    $"Proxy.IsServerSocketConnected {Proxy.IsServerSocketConnected}");
+                    $"Client.IsServerSocketConnected {Client.IsServerSocketConnected}");
             });
         }
 
@@ -81,62 +83,62 @@ namespace FurcadiaLibMono.Net.DirectConnection
         [TestCase(EmitTest, "test")]
         public void ChannelTextIs(string testc, string ExpectedValue)
         {
-            Proxy.ProcessServerChannelData += (sender, Args) =>
+            Client.ProcessServerChannelData += (sender, Args) =>
             {
                 if (sender is ChannelObject ServeObject)
                     Assert.That(ServeObject.Player.Message,
                         Is.EqualTo(ExpectedValue));
             };
-            Proxy.ParseServerChannel(testc, false);
-            Proxy.ProcessServerChannelData -= (sender, Args) =>
+            Client.ParseServerChannel(testc, false);
+            Client.ProcessServerChannelData -= (sender, Args) =>
             {
                 if (sender is ChannelObject ServeObject)
                     Assert.That(ServeObject.Player.Message,
                         Is.EqualTo(ExpectedValue));
             };
-            Logger.Debug($"ServerStatus: {Proxy.ServerStatus}");
+            Logger.Debug($"ServerStatus: {Client.ServerStatus}");
         }
 
         [TearDown]
         public void Cleanup()
         {
             DisconnectTests();
-            Proxy.Error -= (e, o) => Logger.Error($"{e} {o}");
+            Client.Error -= (e, o) => Logger.Error($"{e} {o}");
 
-            Proxy.Dispose();
+            Client.Dispose();
             Options = null;
         }
 
         public void DisconnectTests()
         {
-            Proxy.ServerStatusChanged += (sender, e) =>
+            Client.ServerStatusChanged += (sender, e) =>
             {
                 if (e.ConnectPhase == ConnectionPhase.Disconnected)
                 {
                     Assert.Multiple(() =>
                     {
-                        Assert.That(Proxy.ServerStatus,
+                        Assert.That(Client.ServerStatus,
                              Is.EqualTo(ConnectionPhase.Disconnected),
-                            $"Proxy.ServerStatus {Proxy.ServerStatus}");
-                        Assert.That(Proxy.IsServerSocketConnected,
+                            $"Client.ServerStatus {Client.ServerStatus}");
+                        Assert.That(Client.IsServerSocketConnected,
                              Is.EqualTo(false),
-                            $"Proxy.IsServerSocketConnected {Proxy.IsServerSocketConnected}");
+                            $"Client.IsServerSocketConnected {Client.IsServerSocketConnected}");
                     });
                 }
             };
-            Proxy.Disconnect();
-            Proxy.ServerStatusChanged -= (sender, e) =>
+            Client.Disconnect();
+            Client.ServerStatusChanged -= (sender, e) =>
             {
                 if (e.ConnectPhase == ConnectionPhase.Disconnected)
                 {
                     Assert.Multiple(() =>
                     {
-                        Assert.That(Proxy.ServerStatus,
+                        Assert.That(Client.ServerStatus,
                              Is.EqualTo(ConnectionPhase.Disconnected),
-                            $"Proxy.ServerStatus {Proxy.ServerStatus}");
-                        Assert.That(Proxy.IsServerSocketConnected,
+                            $"Client.ServerStatus {Client.ServerStatus}");
+                        Assert.That(Client.IsServerSocketConnected,
                              Is.EqualTo(false),
-                            $"Proxy.IsServerSocketConnected {Proxy.IsServerSocketConnected}");
+                            $"Client.IsServerSocketConnected {Client.IsServerSocketConnected}");
                     });
                 }
             };
@@ -155,10 +157,10 @@ namespace FurcadiaLibMono.Net.DirectConnection
         [TestCase(Emote, "emote")]
         public void ExpectedChannelNameIs(string ChannelCode, string ExpectedValue)
         {
-            //if (!Proxy.StandAlone)
+            //if (!Client.StandAlone)
             //    HaltFor(DreamEntranceDelay);
 
-            Proxy.ProcessServerChannelData += (sender, Args) =>
+            Client.ProcessServerChannelData += (sender, Args) =>
             {
                 if (sender is ChannelObject ServeObject)
                 {
@@ -167,8 +169,8 @@ namespace FurcadiaLibMono.Net.DirectConnection
                 }
             };
 
-            Proxy.ParseServerChannel(ChannelCode, false);
-            Proxy.ProcessServerChannelData -= (sender, Args) =>
+            Client.ParseServerChannel(ChannelCode, false);
+            Client.ProcessServerChannelData -= (sender, Args) =>
             {
                 if (sender is ChannelObject ServeObject)
                 {
@@ -180,27 +182,31 @@ namespace FurcadiaLibMono.Net.DirectConnection
 
         [TestCase(WhisperTest, "Gerolkae")]
         [TestCase(PingTest, "Gerolkae")]
-        [TestCase(YouWhisper2, "Silver Monkey")]
+        [TestCase(YouWhisper2)]
         [TestCase(GeroShout, "Gerolkae")]
-        [TestCase(YouShouYo, "Silver Monkey")]
+        [TestCase(YouShouYo)]
         [TestCase(EmitWarning, "Silver Monkey")]
         [TestCase(Emit, "Furcadia Game Server")]
         [TestCase(EmitBlah, "Furcadia Game Server")]
         [TestCase(Emote, "Silver monkey")]
         [TestCase(GeroWhisperHi, "Gerolkae")]
-        public void ExpectedCharachter(string testc, string ExpectedValue)
+        public void ExpectedCharachter(string testc, string ExpectedValue = "you")
         {
-            Proxy.ProcessServerChannelData += (sender, Args) =>
+            Client.ProcessServerChannelData += (sender, Args) =>
             {
                 if (sender is ChannelObject ServeObject)
                 {
-                    Assert.That(ServeObject.Player.ShortName,
-                        Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
+                    if (ExpectedValue == "you")
+                        Assert.That(ServeObject.Player.ShortName,
+                            Is.EqualTo(Client.ConnectedFurre.ShortName));
+                    else
+                        Assert.That(ServeObject.Player.ShortName,
+                            Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
                 }
             };
 
-            Proxy.ParseServerChannel(testc, false);
-            Proxy.ProcessServerChannelData -= (sender, Args) =>
+            Client.ParseServerChannel(testc, false);
+            Client.ProcessServerChannelData -= (sender, Args) =>
             {
                 if (sender is ChannelObject ServeObject)
                 {
@@ -208,32 +214,26 @@ namespace FurcadiaLibMono.Net.DirectConnection
                         Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
                 }
             };
-            Logger.Debug($"ServerStatus: {Proxy.ServerStatus}");
+            Logger.Debug($"ServerStatus: {Client.ServerStatus}");
         }
 
         [SetUp]
         public void Initialize()
         {
-#pragma warning disable CS0618 // Obsolete, Place holder till Accounts are ready
-            var CharacterFile = Path.Combine(FurcPaths.CharacterPath,
-#pragma warning restore CS0618 // Obsolete, Place holder till Accounts are ready
-                "silvermonkey.ini");
+            var Character = new IniParser();
+            Options = Options = Character.LoadOptionsFromIni(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "dbugger.ini"));
 
-            Options = new ClientOptions()
-            {
-            };
+            Client = new NetConnection(Options);
 
-            Proxy = new NetConnection(Options);
-
-            Proxy.Error += (e, o) => Logger.Error($"{e} {o}");
-            BotHasConnected();
+            Client.Error += (e, o) => Logger.Error($"{e} {o}");
+            ClientHasConnected();
         }
 
         [TestCase(GeroShout, "ping")]
-        public void ProxySession_InstructionObjectPlayerIs(string testc, string ExpectedValue)
+        public void ClientSession_InstructionObjectPlayerIs(string testc, string ExpectedValue)
         {
-            Proxy.SendFormattedTextToServer("- Shout");
-            Proxy.ProcessServerChannelData += (sender, Args) =>
+            Client.SendFormattedTextToServer("- Shout");
+            Client.ProcessServerChannelData += (sender, Args) =>
             {
                 if (sender is ChannelObject InstructionObject)
                 {
@@ -242,8 +242,8 @@ namespace FurcadiaLibMono.Net.DirectConnection
                 }
             };
 
-            Proxy.ParseServerChannel(testc, false);
-            Proxy.ProcessServerChannelData -= (sender, Args) =>
+            Client.ParseServerChannel(testc, false);
+            Client.ProcessServerChannelData -= (sender, Args) =>
             {
                 if (sender is ChannelObject InstructionObject)
                 {
