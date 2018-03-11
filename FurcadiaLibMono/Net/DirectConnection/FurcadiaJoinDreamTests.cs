@@ -6,6 +6,7 @@ using Furcadia.Net.Options;
 using Furcadia.Net.Utils.ServerParser;
 using NUnit.Framework;
 using System.IO;
+using static FurcadiaLibMono.Utilities;
 
 namespace FurcadiaLibMono.Net.DirectConnection
 {
@@ -22,12 +23,6 @@ namespace FurcadiaLibMono.Net.DirectConnection
             Logger.SingleThreaded = true;
             Logger.LogOutput = new MultiLogOutput(new FileLogOutput(Level.Debug), new FileLogOutput(Level.Error));
         }
-
-        #region Public Fields
-
-        public Paths FurcPaths = new Paths();
-
-        #endregion Public Fields
 
         #region Private Fields
 
@@ -54,16 +49,13 @@ namespace FurcadiaLibMono.Net.DirectConnection
 
         #endregion Private Fields
 
-        [OneTimeSetUp]
+        [SetUp]
         public void Initialize()
         {
-#pragma warning disable CS0618 // Obsolete, Place holder till Accounts are ready
-            var CharacterFile = Path.Combine(FurcPaths.CharacterPath,
-#pragma warning restore CS0618 // Obsolete, Place holder till Accounts are ready
-                "silvermonkey.ini");
-
             var Options = new ClientOptions()
             {
+                CharacterName = "D-bugger",
+                Password = "T8fok13dx"
             };
 
             Client = new NetConnection(Options);
@@ -75,7 +67,7 @@ namespace FurcadiaLibMono.Net.DirectConnection
         public void BotHasConnected(bool StandAlone = true)
         {
             Client.Connect();
-            // HaltFor(ConnectWaitTime);
+            HaltFor(5);
 
             Assert.Multiple((() =>
             {
@@ -129,7 +121,7 @@ namespace FurcadiaLibMono.Net.DirectConnection
             };
         }
 
-        [OneTimeTearDown]
+        [TearDown]
         public void Cleanup()
         {
             DisconnectTests();
@@ -143,7 +135,7 @@ namespace FurcadiaLibMono.Net.DirectConnection
             Client.Disconnect();
             //HaltFor(CleanupDelayTime);
 
-            Assert.Multiple((TestDelegate)(() =>
+            Assert.Multiple((() =>
             {
                 Assert.That(this.Client.ServerStatus,
                      Is.EqualTo(ConnectionPhase.Disconnected),

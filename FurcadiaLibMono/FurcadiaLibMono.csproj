@@ -44,7 +44,6 @@
     <Compile Include="Net\DirectConnection\QueryTests.cs" />
     <Compile Include="Net\web\NetWebWebrequests_Tests.cs" />
     <Compile Include="OneTimeSetupAndTearDown.cs" />
-    <Compile Include="TestClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="utilities\Utilities.cs" />
   </ItemGroup>
@@ -55,7 +54,7 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FurcLib\FurcadiaLib.csproj">
+    <ProjectReference Include="..\..\FurcLib\FurcadiaLib.csproj">
       <Project>{156c2af0-3da8-4d8c-a525-5400185579b3}</Project>
       <Name>FurcadiaLib</Name>
     </ProjectReference>
