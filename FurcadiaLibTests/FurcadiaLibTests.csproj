@@ -64,6 +64,8 @@
     <Compile Include="Net\DreamInfo\DreamTests.cs" />
     <Compile Include="Net\DreamInfo\FurreTests.cs" />
     <Compile Include="Net\NetProxyTests.cs" />
+    <Compile Include="Net\NoConnection\ChannelParser.cs" />
+    <Compile Include="Net\NoConnection\DirectConnectChannelParser.cs" />
     <Compile Include="Net\Proxy\FurcadiaJoinDreamTests.cs" />
     <Compile Include="Net\Proxy\ProvyConnectionTextx.cs" />
     <Compile Include="Net\Proxy\QueryTests.cs" />
@@ -87,6 +89,10 @@
     <ProjectReference Include="..\..\FurcLib\FurcadiaLib.csproj">
       <Project>{156c2af0-3da8-4d8c-a525-5400185579b3}</Project>
       <Name>FurcadiaLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MonkeyCore\MonkeyCore.csproj">
+      <Project>{A4512568-6878-4EE9-8549-CFF611D399A1}</Project>
+      <Name>MonkeyCore</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
