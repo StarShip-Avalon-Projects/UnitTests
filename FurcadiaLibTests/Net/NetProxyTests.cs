@@ -145,7 +145,7 @@ namespace FurcadiaLibTests.Net.Proxy.DisconnectedTests
             Dream.Furres.Add(new Furre(3, "John More"));
             Dream.Furres.Add(new Furre(4, "Silver Monkey"));
             Dream.Furres.Add(new Furre(5, "Gerolkae"));
-            proxy.ConnectedFurre = new Furre(4, "Silver Monkey");
+            // proxy.ConnectedFurre = new Furre(4, "Silver Monkey");
 
             return proxy;
         }

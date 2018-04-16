@@ -73,7 +73,7 @@ namespace FurcadiaLibTests.Net.NoConnection
             Proxy.Dream.Furres.Add(new Furre(3, "John More"));
             Proxy.Dream.Furres.Add(new Furre(4, "Silver Monkey"));
             Proxy.Dream.Furres.Add(new Furre(5, "Gerolkae"));
-            Proxy.ConnectedFurre = new Furre(4, "Silver Monkey");
+            //  Proxy.ConnectedFurre = new Furre(4, "Silver Monkey");
         }
 
         [TestCase(WhisperTest, "hi")]
