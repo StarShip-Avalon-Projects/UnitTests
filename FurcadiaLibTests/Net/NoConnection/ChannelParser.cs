@@ -1,9 +1,9 @@
-﻿using Furcadia.Logging;
+﻿using Furcadia.IO;
+using Furcadia.Logging;
 using Furcadia.Net.DreamInfo;
 using Furcadia.Net.Options;
 using Furcadia.Net.Proxy;
 using Furcadia.Net.Utils.ServerParser;
-using IO;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -44,13 +44,14 @@ namespace FurcadiaLibTests.Net.NoConnection
         public string SettingsFile { get; private set; }
         public string BackupSettingsFile { get; private set; }
         public ProxyOptions options { get; private set; }
+        private Paths FurcPath = new Paths();
 
         [SetUp]
         public void Initialize()
         {
             var MsFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
                 "Bugreport 165 From Jake.ms");
-            var CharacterFile = Path.Combine(Paths.FurcadiaCharactersFolder,
+            var CharacterFile = Path.Combine(FurcPath.CharacterPath,
                 "dbugger.ini");
 
             options = new ProxyOptions()
