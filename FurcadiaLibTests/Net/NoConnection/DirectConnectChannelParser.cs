@@ -71,7 +71,9 @@ namespace FurcadiaLibTests.Net.NoConnection
             Client.Dream.Furres.Add(new Furre(3, "John More"));
             Client.Dream.Furres.Add(new Furre(4, "Silver Monkey"));
             Client.Dream.Furres.Add(new Furre(5, "Gerolkae"));
-            Client.ConnectedFurre = new Furre(4, "Silver Monkey");
+
+            Client.ConnectedFurreId = 4;
+            Client.ConnectedFurreName = "Silver Monkey";
         }
 
         [TestCase(WhisperTest, "hi")]
@@ -89,8 +91,10 @@ namespace FurcadiaLibTests.Net.NoConnection
             {
                 if (sender is ChannelObject ServeObject)
                 {
-                    Assert.That(ServeObject.Player.Message,
-                        Is.EqualTo(ExpectedValue));
+                    Assert.That(ServeObject.Player.Message.Trim(),
+                        Is.EqualTo(ExpectedValue.Trim()),
+                        $"Player.Message '{ServeObject.Player.Message}' ExpectedValue: {ExpectedValue}"
+                        );
                 }
             };
 
@@ -100,8 +104,10 @@ namespace FurcadiaLibTests.Net.NoConnection
             {
                 if (sender is ChannelObject ServeObject)
                 {
-                    Assert.That(ServeObject.Player.Message,
-                        Is.EqualTo(ExpectedValue));
+                    Assert.That(ServeObject.Player.Message.Trim(),
+                        Is.EqualTo(ExpectedValue.Trim()),
+                        $"Player.Message '{ServeObject.Player.Message}' ExpectedValue: {ExpectedValue}"
+                        );
                 }
             };
         }
@@ -132,7 +138,7 @@ namespace FurcadiaLibTests.Net.NoConnection
                     {
                         Assert.That(ServeObject.Player.ShortName,
                             Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
-                        if (ServeObject.Player.ShortName != "furcadiagameserver" && Args.Channel != "@emit")
+                        if (ServeObject.Player.ShortName != "furcadiagameserver")
                             Assert.That(Client.Dream.Furres.Contains(ServeObject.Player));
                     }
                 }
@@ -163,17 +169,17 @@ namespace FurcadiaLibTests.Net.NoConnection
         }
 
         [TestCase(GeroShout, "ping")]
-        public void ProxySession_InstructionObjectPlayerIs(string testc, string ExpectedValue)
+        public void DirectConnection_InstructionObjectPlayerIs(string testc, string ExpectedValue)
         {
             //Turn the channel on
             Client.SendFormattedTextToServer("- Shout");
 
             Client.ProcessServerChannelData += (sender, Args) =>
             {
-                if (sender is ChannelObject InstructionObject)
+                if (sender is ChannelObject ServeObject)
                 {
-                    Assert.That(InstructionObject.Player.Message,
-                        Is.EqualTo(ExpectedValue));
+                    Assert.That(ServeObject.Player.Message.Trim(),
+                        Is.EqualTo(ExpectedValue.Trim()));
                 }
             };
 
@@ -181,10 +187,10 @@ namespace FurcadiaLibTests.Net.NoConnection
 
             Client.ProcessServerChannelData -= (sender, Args) =>
             {
-                if (sender is ChannelObject InstructionObject)
+                if (sender is ChannelObject ServeObject)
                 {
-                    Assert.That(InstructionObject.Player.Message,
-                        Is.EqualTo(ExpectedValue));
+                    Assert.That(ServeObject.Player.Message.Trim(),
+                        Is.EqualTo(ExpectedValue.Trim()));
                 }
             };
         }

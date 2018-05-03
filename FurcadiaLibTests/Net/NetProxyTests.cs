@@ -46,19 +46,35 @@ namespace FurcadiaLibTests.Net.Proxy.DisconnectedTests
         [TestCase(Emit, "@emit")]
         [TestCase(SpokenEmit, "@emit")]
         [TestCase(Emote, "emote")]
-        public void ProxySession_Test_Channel(string testc, string ExpectedValue)
+        public void NetProxy_Test_Channel(string testc, string ExpectedValue)
 
         {
-            var t = ProxySessionInitialize();
+            var Proxy = ProxySessionInitialize();
 
-            t.ProcessServerChannelData += (sender, Args) =>
-               Assert.IsTrue(ExpectedValue == Args.Channel);
+            Proxy.ProcessServerChannelData += (sender, Args) =>
+            {
+                if (sender is ChannelObject ServeObject)
+                {
+                    Assert.That(Args.Channel,
+                        Is.EqualTo(ExpectedValue),
+                        $"Args.Channel '{Args.Channel}' ExpectedValue: {ExpectedValue}"
+                        );
+                }
+            };
 
-            t.ParseServerChannel(testc, false);
-            t.ProcessServerChannelData -= (sender, Args) =>
-               Assert.IsTrue(ExpectedValue == Args.Channel);
+            Proxy.ParseServerChannel(testc, false);
+            Proxy.ProcessServerChannelData -= (sender, Args) =>
+            {
+                if (sender is ChannelObject ServeObject)
+                {
+                    Assert.That(Args.Channel,
+                        Is.EqualTo(ExpectedValue),
+                        $"Args.Channel '{Args.Channel}' ExpectedValue: {ExpectedValue}"
+                        );
+                }
+            };
 
-            t.Dispose();
+            Proxy.Dispose();
         }
 
         [TestCase(WhisperTest, "hi")]
@@ -75,21 +91,29 @@ namespace FurcadiaLibTests.Net.Proxy.DisconnectedTests
         [TestCase(Emote, "Emoe")]
         public void Test_FurreMessageIs(string testc, string ExpectedValue)
         {
-            var t = ProxySessionInitialize();
+            var Proxy = ProxySessionInitialize();
 
-            t.ProcessServerChannelData += (sender, Args) =>
-           {
-               var ServeObject = (ChannelObject)sender;
-               Assert.IsTrue(ExpectedValue == ServeObject.Player.Message);
-           };
-            t.ParseServerChannel(testc, false);
-            t.ProcessServerChannelData -= (sender, Args) =>
+            Proxy.ProcessServerChannelData += (sender, Args) =>
             {
-                var ServeObject = (ChannelObject)sender;
-                Assert.IsTrue(ExpectedValue == ServeObject.Player.Message);
+                if (sender is ChannelObject ServeObject)
+                {
+                    Assert.That(ServeObject.Player.Message.Trim(),
+                        Is.EqualTo(ExpectedValue.Trim()));
+                }
             };
 
-            t.Dispose();
+            Proxy.ParseServerChannel(testc, false);
+
+            Proxy.ProcessServerChannelData -= (sender, Args) =>
+            {
+                if (sender is ChannelObject ServeObject)
+                {
+                    Assert.That(ServeObject.Player.Message.Trim(),
+                        Is.EqualTo(ExpectedValue.Trim()));
+                }
+            };
+
+            Proxy.Dispose();
         }
 
         [TestCase(WhisperTest, 5, "Gerolkae")]
@@ -143,8 +167,10 @@ namespace FurcadiaLibTests.Net.Proxy.DisconnectedTests
             Dream.Furres.Add(new Furre(1, "John"));
             Dream.Furres.Add(new Furre(2, "Bill Nye"));
             Dream.Furres.Add(new Furre(3, "John More"));
-            Dream.Furres.Add(new Furre(4, "Silver Monkey"));
+            Dream.Furres.Add(new Furre(4, "Silver|Monkey"));
             Dream.Furres.Add(new Furre(5, "Gerolkae"));
+            proxy.ConnectedFurreId = 4;
+            proxy.ConnectedFurreName = "Silver|Monkey";
             // proxy.ConnectedFurre = new Furre(4, "Silver Monkey");
 
             return proxy;

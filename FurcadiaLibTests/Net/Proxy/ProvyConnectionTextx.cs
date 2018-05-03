@@ -124,15 +124,23 @@ namespace FurcadiaLibTests.Net.Proxy
             Proxy.ProcessServerChannelData += (sender, Args) =>
             {
                 if (sender is ChannelObject ServeObject)
-                    Assert.That(ServeObject.Player.Message,
-                        Is.EqualTo(ExpectedValue));
+                {
+                    Assert.That(ServeObject.Player.Message.Trim(),
+                        Is.EqualTo(ExpectedValue.Trim()),
+                        $"Player.Message '{ServeObject.Player.Message}' ExpectedValue: {ExpectedValue}"
+                        );
+                }
             };
             Proxy.ParseServerChannel(testc, false);
             Proxy.ProcessServerChannelData -= (sender, Args) =>
             {
                 if (sender is ChannelObject ServeObject)
-                    Assert.That(ServeObject.Player.Message,
-                        Is.EqualTo(ExpectedValue));
+                {
+                    Assert.That(ServeObject.Player.Message.Trim(),
+                        Is.EqualTo(ExpectedValue.Trim()),
+                        $"Player.Message '{ServeObject.Player.Message}' ExpectedValue: {ExpectedValue}"
+                        );
+                }
             };
             Logger.Debug($"ServerStatus: {Proxy.ServerStatus}");
             Logger.Debug($"ClientStatus: {Proxy.ClientStatus}");
@@ -221,7 +229,9 @@ namespace FurcadiaLibTests.Net.Proxy
                 if (sender is ChannelObject ServeObject)
                 {
                     Assert.That(Args.Channel,
-                        Is.EqualTo(ExpectedValue));
+                        Is.EqualTo(ExpectedValue),
+                        $"Args.Channel '{Args.Channel}' ExpectedValue: {ExpectedValue}"
+                        );
                 }
             };
 
@@ -231,7 +241,9 @@ namespace FurcadiaLibTests.Net.Proxy
                 if (sender is ChannelObject ServeObject)
                 {
                     Assert.That(Args.Channel,
-                        Is.EqualTo(ExpectedValue));
+                        Is.EqualTo(ExpectedValue),
+                        $"Args.Channel '{Args.Channel}' ExpectedValue: {ExpectedValue}"
+                        );
                 }
             };
         }
@@ -293,25 +305,29 @@ namespace FurcadiaLibTests.Net.Proxy
         }
 
         [TestCase(GeroShout, "ping")]
-        public void ProxySession_InstructionObjectPlayerIs(string testc, string ExpectedValue)
+        public void ProxyConnection_InstructionObjectPlayerIs(string testc, string ExpectedValue)
         {
             Proxy.SendFormattedTextToServer("- Shout");
             Proxy.ProcessServerChannelData += (sender, Args) =>
             {
-                if (sender is ChannelObject InstructionObject)
+                if (sender is ChannelObject ServeObject)
                 {
-                    Assert.That(InstructionObject.Player.Message,
-                        Is.EqualTo(ExpectedValue));
+                    Assert.That(ServeObject.Player.Message.Trim(),
+                        Is.EqualTo(ExpectedValue.Trim()),
+                        $"Player.Message '{ServeObject.Player.Message}' ExpectedValue: {ExpectedValue}"
+                        );
                 }
             };
 
             Proxy.ParseServerChannel(testc, false);
             Proxy.ProcessServerChannelData -= (sender, Args) =>
             {
-                if (sender is ChannelObject InstructionObject)
+                if (sender is ChannelObject ServeObject)
                 {
-                    Assert.That(InstructionObject.Player.Message,
-                        Is.EqualTo(ExpectedValue));
+                    Assert.That(ServeObject.Player.Message.Trim(),
+                        Is.EqualTo(ExpectedValue.Trim()),
+                        $"Player.Message '{ServeObject.Player.Message}' ExpectedValue: {ExpectedValue}"
+                        );
                 }
             };
         }

@@ -86,15 +86,23 @@ namespace FurcadiaLibMono.Net.DirectConnection
             Client.ProcessServerChannelData += (sender, Args) =>
             {
                 if (sender is ChannelObject ServeObject)
-                    Assert.That(ServeObject.Player.Message,
-                        Is.EqualTo(ExpectedValue));
+                {
+                    Assert.That(ServeObject.Player.Message.Trim(),
+                        Is.EqualTo(ExpectedValue.Trim()),
+                        $"Player.Message '{ServeObject.Player.Message}' ExpectedValue: {ExpectedValue}"
+                        );
+                }
             };
             Client.ParseServerChannel(testc, false);
             Client.ProcessServerChannelData -= (sender, Args) =>
             {
                 if (sender is ChannelObject ServeObject)
-                    Assert.That(ServeObject.Player.Message,
-                        Is.EqualTo(ExpectedValue));
+                {
+                    Assert.That(ServeObject.Player.Message.Trim(),
+                        Is.EqualTo(ExpectedValue.Trim()),
+                        $"Player.Message '{ServeObject.Player.Message}' ExpectedValue: {ExpectedValue}"
+                        );
+                }
             };
             Logger.Debug($"ServerStatus: {Client.ServerStatus}");
         }
