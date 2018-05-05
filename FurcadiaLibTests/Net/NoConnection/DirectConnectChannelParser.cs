@@ -66,11 +66,11 @@ namespace FurcadiaLibTests.Net.NoConnection
 
         private void PopulateFurreList()
         {
-            Client.Dream.Furres.Add(new Furre(1, "John"));
-            Client.Dream.Furres.Add(new Furre(2, "Bill Nye"));
-            Client.Dream.Furres.Add(new Furre(3, "John More"));
-            Client.Dream.Furres.Add(new Furre(4, "Silver Monkey"));
-            Client.Dream.Furres.Add(new Furre(5, "Gerolkae"));
+            Client.Furres.Add(new Furre(1, "John"));
+            Client.Furres.Add(new Furre(2, "Bill Nye"));
+            Client.Furres.Add(new Furre(3, "John More"));
+            Client.Furres.Add(new Furre(4, "Silver Monkey"));
+            Client.Furres.Add(new Furre(5, "Gerolkae"));
 
             Client.ConnectedFurreId = 4;
             Client.ConnectedFurreName = "Silver Monkey";
@@ -132,14 +132,14 @@ namespace FurcadiaLibTests.Net.NoConnection
                     {
                         Assert.That(ServeObject.Player,
                             Is.EqualTo(Client.ConnectedFurre));
-                        Assert.That(Client.Dream.Furres.Contains(ServeObject.Player));
+                        Assert.That(Client.Furres.Contains(ServeObject.Player));
                     }
                     else
                     {
                         Assert.That(ServeObject.Player.ShortName,
                             Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
                         if (ServeObject.Player.ShortName != "furcadiagameserver")
-                            Assert.That(Client.Dream.Furres.Contains(ServeObject.Player));
+                            Assert.That(Client.Furres.Contains(ServeObject.Player));
                     }
                 }
             };
@@ -155,14 +155,14 @@ namespace FurcadiaLibTests.Net.NoConnection
                     {
                         Assert.That(ServeObject.Player,
                             Is.EqualTo(Client.ConnectedFurre));
-                        Assert.That(Client.Dream.Furres.Contains(ServeObject.Player));
+                        Assert.That(Client.Furres.Contains(ServeObject.Player));
                     }
                     else
                     {
                         Assert.That(ServeObject.Player.ShortName,
                             Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
                         if (ServeObject.Player.ShortName != "furcadiagameserver" && Args.Channel != "@emit")
-                            Assert.That(Client.Dream.Furres.Contains(ServeObject.Player));
+                            Assert.That(Client.Furres.Contains(ServeObject.Player));
                     }
                 }
             };

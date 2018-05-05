@@ -184,7 +184,7 @@ namespace FurcadiaLibTests.Net.Proxy
                     });
                 }
             };
-            Proxy.DisconnectServerAndClientStreams();
+            Proxy.Disconnect();
             Proxy.ServerStatusChanged -= (sender, e) =>
             {
                 if (e.ConnectPhase == ConnectionPhase.Disconnected)

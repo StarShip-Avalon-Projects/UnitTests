@@ -173,7 +173,7 @@ namespace FurcadiaLibTests.Net.Proxy
 
         public void DisconnectTests()
         {
-            Proxy.DisconnectServerAndClientStreams();
+            Proxy.Disconnect();
             if (!Proxy.StandAlone)
                 HaltFor(CleanupDelayTime);
 

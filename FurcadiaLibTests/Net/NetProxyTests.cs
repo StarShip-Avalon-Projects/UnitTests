@@ -164,11 +164,11 @@ namespace FurcadiaLibTests.Net.Proxy.DisconnectedTests
             var proxy = new ProxySession(options);
             proxy.Error += (e, o) => Logger.Error($"{e} {o}");
 
-            Dream.Furres.Add(new Furre(1, "John"));
-            Dream.Furres.Add(new Furre(2, "Bill Nye"));
-            Dream.Furres.Add(new Furre(3, "John More"));
-            Dream.Furres.Add(new Furre(4, "Silver|Monkey"));
-            Dream.Furres.Add(new Furre(5, "Gerolkae"));
+            Furres.Add(new Furre(1, "John"));
+            Furres.Add(new Furre(2, "Bill Nye"));
+            Furres.Add(new Furre(3, "John More"));
+            Furres.Add(new Furre(4, "Silver|Monkey"));
+            Furres.Add(new Furre(5, "Gerolkae"));
             proxy.ConnectedFurreId = 4;
             proxy.ConnectedFurreName = "Silver|Monkey";
             // proxy.ConnectedFurre = new Furre(4, "Silver Monkey");
