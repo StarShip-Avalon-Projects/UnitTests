@@ -30,7 +30,9 @@ namespace FurcadiaLibTests.Net.Proxy.DisconnectedTests
         private const string YouShouYo = "<font color='shout'>You shout, \"Yo Its Me\"</font>";
         private const string YouWhisper = "<font color='whisper'>[You whisper \"Logged on\" to<name shortname='gerolkae' forced src='whisper-to'>Gerolkae</name>. ]</font>";
         private const string YouWhisper2 = "<font color='whisper'>[ You whisper \"Logged on2\" to <name shortname='gerolkae' forced src='whisper-to'>Gerolkae</name>. ]</font>";
+
         //    private ProxySession Proxy;
+        public const string ErrorGeroOffline = "<font color='error'>Sorry, there's no furre around right now with an exact name gerolkae! To find similar names, try typing the name without the '%' at the beginning of the name. -- Beekin the Help Dragon</font>";
 
         #endregion Private Fields
 
@@ -78,10 +80,7 @@ namespace FurcadiaLibTests.Net.Proxy.DisconnectedTests
         }
 
         [TestCase(WhisperTest, "hi")]
-        [TestCase(PingTest, "ping")]
         [TestCase(WhisperTest2, "Hi")]
-        [TestCase(PingTest2, "Ping")]
-        [TestCase(YouWhisper, "Logged on")]
         [TestCase(YouWhisper, "Logged on")]
         [TestCase(YouShouYo, "Yo Its Me")]
         [TestCase(GeroShout, "ping")]
@@ -89,16 +88,18 @@ namespace FurcadiaLibTests.Net.Proxy.DisconnectedTests
         [TestCase(Emit, "Silver|Monkey has arrived...")]
         [TestCase(SpokenEmit, "Blah")]
         [TestCase(Emote, "Emoe")]
+        [TestCase(ErrorGeroOffline, "Sorry, there's no furre around right now with an exact name gerolkae! To find similar names, try typing the name without the '%' at the beginning of the name. -- Beekin the Help Dragon")]
         public void Test_FurreMessageIs(string testc, string ExpectedValue)
         {
             var Proxy = ProxySessionInitialize();
-
+            bool IsTested = false;
             Proxy.ProcessServerChannelData += (sender, Args) =>
             {
-                if (sender is ChannelObject ServeObject)
+                if (!IsTested && sender is ChannelObject ServeObject)
                 {
                     Assert.That(ServeObject.Player.Message.Trim(),
                         Is.EqualTo(ExpectedValue.Trim()));
+                    IsTested = true;
                 }
             };
 
@@ -106,10 +107,11 @@ namespace FurcadiaLibTests.Net.Proxy.DisconnectedTests
 
             Proxy.ProcessServerChannelData -= (sender, Args) =>
             {
-                if (sender is ChannelObject ServeObject)
+                if (!IsTested && sender is ChannelObject ServeObject)
                 {
                     Assert.That(ServeObject.Player.Message.Trim(),
                         Is.EqualTo(ExpectedValue.Trim()));
+                    IsTested = true;
                 }
             };
 
