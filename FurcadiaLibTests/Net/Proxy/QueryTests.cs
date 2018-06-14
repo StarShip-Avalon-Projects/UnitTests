@@ -122,9 +122,12 @@ namespace FurcadiaLibTests.Net.Proxy
         {
             lock (qLock)
             {
+                bool isTested = false;
                 Proxy.ProcessServerChannelData += (sender, Args) =>
                 {
-                    if (sender is QueryChannelObject queryObject)
+                    if (!isTested && sender is QueryChannelObject queryObject)
+                    {
+                        isTested = true;
                         Assert.Multiple(() =>
                         {
                             Assert.That(queryObject.Query,
@@ -132,13 +135,16 @@ namespace FurcadiaLibTests.Net.Proxy
                             Assert.That(queryObject.Player.ShortName,
                                 Is.EqualTo(ExpectedName.ToFurcadiaShortName()), queryObject.ToString());
                         });
+                    }
                 };
 
                 Proxy.ParseServerChannel(ChannelCode, false);
 
                 Proxy.ProcessServerChannelData -= (sender, Args) =>
                 {
-                    if (sender is QueryChannelObject queryObject)
+                    if (!isTested && sender is QueryChannelObject queryObject)
+                    {
+                        isTested = true;
                         Assert.Multiple(() =>
                         {
                             Assert.That(queryObject.Query,
@@ -146,11 +152,12 @@ namespace FurcadiaLibTests.Net.Proxy
                             Assert.That(queryObject.Player.ShortName,
                                 Is.EqualTo(ExpectedName.ToFurcadiaShortName()), queryObject.ToString());
                         });
+                    }
                 };
             }
         }
 
-        [TearDown]
+        [OneTimeTearDown]
         public void Cleanup()
         {
             BotHaseDisconnected();
@@ -162,7 +169,7 @@ namespace FurcadiaLibTests.Net.Proxy
             Options = null;
         }
 
-        [SetUp]
+        [OneTimeSetUp]
         public void Initialize()
         {
             var furcPath = new Paths();

@@ -83,9 +83,12 @@ namespace FurcadiaLibMono.Net.Proxy
         {
             lock (qLock)
             {
+                bool isTested = false;
                 Client.ProcessServerChannelData += (sender, Args) =>
                 {
-                    if (sender is QueryChannelObject queryObject)
+                    if (!isTested && sender is QueryChannelObject queryObject)
+                    {
+                        isTested = true;
                         Assert.Multiple(() =>
                         {
                             Assert.That(queryObject.Query,
@@ -93,13 +96,16 @@ namespace FurcadiaLibMono.Net.Proxy
                             Assert.That(queryObject.Player.ShortName,
                                 Is.EqualTo(ExpectedName.ToFurcadiaShortName()), queryObject.ToString());
                         });
+                    }
                 };
 
                 Client.ParseServerChannel(ChannelCode, false);
 
                 Client.ProcessServerChannelData -= (sender, Args) =>
                 {
-                    if (sender is QueryChannelObject queryObject)
+                    if (!isTested && sender is QueryChannelObject queryObject)
+                    {
+                        isTested = true;
                         Assert.Multiple(() =>
                         {
                             Assert.That(queryObject.Query,
@@ -107,11 +113,12 @@ namespace FurcadiaLibMono.Net.Proxy
                             Assert.That(queryObject.Player.ShortName,
                                 Is.EqualTo(ExpectedName.ToFurcadiaShortName()), queryObject.ToString());
                         });
+                    }
                 };
             }
         }
 
-        [TearDown]
+        [OneTimeTearDown]
         public void Cleanup()
         {
             BotHaseDisconnected();
@@ -122,7 +129,7 @@ namespace FurcadiaLibMono.Net.Proxy
             Options = null;
         }
 
-        [SetUp]
+        [OneTimeSetUp]
         public void Initialize()
         {
             var Character = new IniParser();

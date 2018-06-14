@@ -57,6 +57,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Drawing\ViewAreaTests.cs" />
     <Compile Include="Net\DreamInfo\DreamTests.cs" />
     <Compile Include="Net\DreamInfo\FurreTests.cs" />
     <Compile Include="Net\NetProxyTests.cs" />

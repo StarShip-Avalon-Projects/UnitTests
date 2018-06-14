@@ -15,7 +15,7 @@ namespace FurcadiaLibMono.Net.DirectConnection
     public class ClientConnectionTests_Alt_SilverMonkey
     {
         #region Public Fields
-
+        object parseLock = new object();
         public Paths FurcPaths = new Paths();
 
         #endregion Public Fields
@@ -33,9 +33,11 @@ namespace FurcadiaLibMono.Net.DirectConnection
         private const string GeroWhisperCunchatize = "<font color='whisper'>[ <name shortname='gerolkae' src='whisper-from'>Gerolkae</name> whispers, \"crunchatize\" to you. ]</font>";
         private const string GeroWhisperHi = "<font color='whisper'>[ <name shortname='gerolkae' src='whisper-from'>Gerolkae</name> whispers, \"Hi\" to you. ]</font>";
         private const string GeroWhisperRollOut = "<font color='whisper'>[ <name shortname='gerolkae' src='whisper-from'>Gerolkae</name> whispers, \"roll out\" to you. ]</font>";
-        private const string PingTest = @"<name shortname='gerolkae'>Gerolkae</name>: ping";
-        private const string PingTest2 = @"<name shortname='gerolkae'>Gerolkae</name>: Ping";
+
+        //private const string PingTest = @"<name shortname='gerolkae'>Gerolkae</name>: ping";
+        //private const string PingTest2 = @"<name shortname='gerolkae'>Gerolkae</name>: Ping";
         private const string WhisperTest = "<font color='whisper'>[ <name shortname='gerolkae' src='whisper-from'>Gerolkae</name> whispers, \"hi\" to you. ]</font>";
+
         private const string YouShouYo = "<font color='shout'>You shout, \"Yo Its Me\"</font>";
 
         //  private const string YouWhisper = "<font color='whisper'>[You whisper \"Logged on\" to<name shortname='gerolkae' forced src='whisper-to'>Gerolkae</name>. ]</font>";
@@ -70,9 +72,9 @@ namespace FurcadiaLibMono.Net.DirectConnection
         }
 
         [TestCase(WhisperTest, "hi")]
-        [TestCase(PingTest, "ping")]
+        // [TestCase(PingTest, "ping")]
         [TestCase(GeroWhisperHi, "Hi")]
-        [TestCase(PingTest2, "Ping")]
+        //  [TestCase(PingTest2, "Ping")]
         //    [TestCase(YouWhisper, "Logged on")]
         [TestCase(YouShouYo, "Yo Its Me")]
         [TestCase(GeroShout, "ping")]
@@ -83,31 +85,37 @@ namespace FurcadiaLibMono.Net.DirectConnection
         [TestCase(EmitTest, "test")]
         public void ChannelTextIs(string testc, string ExpectedValue)
         {
-            Client.ProcessServerChannelData += (sender, Args) =>
+            lock (parseLock)
             {
-                if (sender is ChannelObject ServeObject)
+                bool isTested = false;
+                Client.ProcessServerChannelData += (sender, Args) =>
                 {
-                    Assert.That(ServeObject.Player.Message.Trim(),
-                        Is.EqualTo(ExpectedValue.Trim()),
-                        $"Player.Message '{ServeObject.Player.Message}' ExpectedValue: {ExpectedValue}"
-                        );
-                }
-            };
-            Client.ParseServerChannel(testc, false);
-            Client.ProcessServerChannelData -= (sender, Args) =>
-            {
-                if (sender is ChannelObject ServeObject)
+                    if (!isTested && sender is ChannelObject ServeObject)
+                    {
+                        isTested = true;
+                        Assert.That(ServeObject.Player.Message.Trim(),
+                            Is.EqualTo(ExpectedValue.Trim()),
+                            $"Player.Message '{ServeObject.Player.Message}' ExpectedValue: {ExpectedValue}"
+                            );
+                    }
+                };
+                Client.ParseServerChannel(testc, false);
+                Client.ProcessServerChannelData -= (sender, Args) =>
                 {
-                    Assert.That(ServeObject.Player.Message.Trim(),
-                        Is.EqualTo(ExpectedValue.Trim()),
-                        $"Player.Message '{ServeObject.Player.Message}' ExpectedValue: {ExpectedValue}"
-                        );
-                }
-            };
-            Logger.Debug($"ServerStatus: {Client.ServerStatus}");
+                    if (!isTested && sender is ChannelObject ServeObject)
+                    {
+                        isTested = true;
+                        Assert.That(ServeObject.Player.Message.Trim(),
+                            Is.EqualTo(ExpectedValue.Trim()),
+                            $"Player.Message '{ServeObject.Player.Message}' ExpectedValue: {ExpectedValue}"
+                            );
+                    }
+                };
+                Logger.Debug($"ServerStatus: {Client.ServerStatus}");
+            }
         }
 
-        [TearDown]
+        [OneTimeTearDown]
         public void Cleanup()
         {
             DisconnectTests();
@@ -156,7 +164,7 @@ namespace FurcadiaLibMono.Net.DirectConnection
         [TestCase(YouWhisper2, "whisper")]
         [TestCase(WhisperTest, "whisper")]
         [TestCase(GeroWhisperHi, "whisper")]
-        [TestCase(PingTest, "say")]
+        //  [TestCase(PingTest, "say")]
         [TestCase(YouShouYo, "shout")]
         [TestCase(GeroShout, "shout")]
         [TestCase(EmitWarning, "@emit")]
@@ -165,31 +173,36 @@ namespace FurcadiaLibMono.Net.DirectConnection
         [TestCase(Emote, "emote")]
         public void ExpectedChannelNameIs(string ChannelCode, string ExpectedValue)
         {
-            //if (!Client.StandAlone)
-            //    HaltFor(DreamEntranceDelay);
-
-            Client.ProcessServerChannelData += (sender, Args) =>
+            lock (parseLock)
             {
-                if (sender is ChannelObject ServeObject)
+                //if (!Client.StandAlone)
+                //    HaltFor(DreamEntranceDelay);
+                bool isTested = false;
+                Client.ProcessServerChannelData += (sender, Args) =>
                 {
-                    Assert.That(Args.Channel,
-                        Is.EqualTo(ExpectedValue));
-                }
-            };
+                    if (!isTested && sender is ChannelObject ServeObject)
+                    {
+                        isTested = true;
+                        Assert.That(Args.Channel,
+                            Is.EqualTo(ExpectedValue));
+                    }
+                };
 
-            Client.ParseServerChannel(ChannelCode, false);
-            Client.ProcessServerChannelData -= (sender, Args) =>
-            {
-                if (sender is ChannelObject ServeObject)
+                Client.ParseServerChannel(ChannelCode, false);
+                Client.ProcessServerChannelData -= (sender, Args) =>
                 {
-                    Assert.That(Args.Channel,
-                        Is.EqualTo(ExpectedValue));
-                }
-            };
+                    if (!isTested && sender is ChannelObject ServeObject)
+                    {
+                        isTested = true;
+                        Assert.That(Args.Channel,
+                            Is.EqualTo(ExpectedValue));
+                    }
+                };
+            }
         }
 
         [TestCase(WhisperTest, "Gerolkae")]
-        [TestCase(PingTest, "Gerolkae")]
+        // [TestCase(PingTest, "Gerolkae")]
         [TestCase(YouWhisper2)]
         [TestCase(GeroShout, "Gerolkae")]
         [TestCase(YouShouYo)]
@@ -200,32 +213,42 @@ namespace FurcadiaLibMono.Net.DirectConnection
         [TestCase(GeroWhisperHi, "Gerolkae")]
         public void ExpectedCharachter(string testc, string ExpectedValue = "you")
         {
-            Client.ProcessServerChannelData += (sender, Args) =>
+            lock (parseLock)
             {
-                if (sender is ChannelObject ServeObject)
+                bool isTested = false;
+                Client.ProcessServerChannelData += (sender, Args) =>
                 {
-                    if (ExpectedValue == "you")
-                        Assert.That(ServeObject.Player.ShortName,
-                            Is.EqualTo(Client.ConnectedFurre.ShortName));
-                    else
-                        Assert.That(ServeObject.Player.ShortName,
-                            Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
-                }
-            };
+                    if (!isTested && sender is ChannelObject ServeObject)
+                    {
+                        isTested = true;
+                        if (ExpectedValue == "you")
+                            Assert.That(ServeObject.Player.ShortName,
+                                Is.EqualTo(Client.ConnectedFurre.ShortName));
+                        else
+                            Assert.That(ServeObject.Player.ShortName,
+                                Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
+                    }
+                };
 
-            Client.ParseServerChannel(testc, false);
-            Client.ProcessServerChannelData -= (sender, Args) =>
-            {
-                if (sender is ChannelObject ServeObject)
+                Client.ParseServerChannel(testc, false);
+                Client.ProcessServerChannelData -= (sender, Args) =>
                 {
-                    Assert.That(ServeObject.Player.ShortName,
-                        Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
-                }
-            };
-            Logger.Debug($"ServerStatus: {Client.ServerStatus}");
+                    if (!isTested && sender is ChannelObject ServeObject)
+                    {
+                        isTested = true;
+                        if (ExpectedValue == "you")
+                            Assert.That(ServeObject.Player.ShortName,
+                                Is.EqualTo(Client.ConnectedFurre.ShortName));
+                        else
+                            Assert.That(ServeObject.Player.ShortName,
+                                Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
+                    }
+                };
+                Logger.Debug($"ServerStatus: {Client.ServerStatus}");
+            }
         }
 
-        [SetUp]
+        [OneTimeSetUp]
         public void Initialize()
         {
             var Character = new IniParser();
@@ -240,25 +263,31 @@ namespace FurcadiaLibMono.Net.DirectConnection
         [TestCase(GeroShout, "ping")]
         public void ClientSession_InstructionObjectPlayerIs(string testc, string ExpectedValue)
         {
-            Client.SendFormattedTextToServer("- Shout");
-            Client.ProcessServerChannelData += (sender, Args) =>
+            lock (parseLock)
             {
-                if (sender is ChannelObject InstructionObject)
+                bool isTested = false;
+                Client.SendFormattedTextToServer("- Shout");
+                Client.ProcessServerChannelData += (sender, Args) =>
                 {
-                    Assert.That(InstructionObject.Player.Message,
-                        Is.EqualTo(ExpectedValue));
-                }
-            };
+                    if (!isTested && sender is ChannelObject InstructionObject)
+                    {
+                        Assert.That(InstructionObject.Player.Message,
+                            Is.EqualTo(ExpectedValue));
+                        isTested = true;
+                    }
+                };
 
-            Client.ParseServerChannel(testc, false);
-            Client.ProcessServerChannelData -= (sender, Args) =>
-            {
-                if (sender is ChannelObject InstructionObject)
+                Client.ParseServerChannel(testc, false);
+                Client.ProcessServerChannelData -= (sender, Args) =>
                 {
-                    Assert.That(InstructionObject.Player.Message,
-                        Is.EqualTo(ExpectedValue));
-                }
-            };
+                    if (!isTested && sender is ChannelObject InstructionObject)
+                    {
+                        Assert.That(InstructionObject.Player.Message,
+                            Is.EqualTo(ExpectedValue));
+                        isTested = true;
+                    }
+                };
+            }
         }
 
         #endregion Public Methods

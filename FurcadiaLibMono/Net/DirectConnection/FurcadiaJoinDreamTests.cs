@@ -50,7 +50,7 @@ namespace FurcadiaLibMono.Net.DirectConnection
 
         #endregion Private Fields
 
-        [SetUp]
+        [OneTimeSetUp]
         public void Initialize()
         {
             var Character = new IniParser();
@@ -86,10 +86,12 @@ namespace FurcadiaLibMono.Net.DirectConnection
         [Author("Gerolkae")]
         public void DreamBookmarkSettingsTest(string DreamUrl, string DreamOwner, string DreamTitle = null)
         {
+            bool isTested = false;
             Client.ProcessServerInstruction += (data, handled) =>
             {
-                if (data is DreamBookmark)
+                if (!isTested && data is DreamBookmark)
                 {
+                    isTested = true;
                     Assert.Multiple(() =>
                     {
                         Assert.That(Client.Dream.DreamOwner, Is.EqualTo(DreamOwner.ToFurcadiaShortName()), $"Dream Owner: {Client.Dream.DreamOwner}");
@@ -105,8 +107,9 @@ namespace FurcadiaLibMono.Net.DirectConnection
 
             Client.ProcessServerInstruction -= (data, handled) =>
             {
-                if (data is DreamBookmark)
+                if (!isTested && data is DreamBookmark)
                 {
+                    isTested = true;
                     Assert.Multiple(() =>
                     {
                         Assert.That(Client.Dream.DreamOwner, Is.EqualTo(DreamOwner.ToFurcadiaShortName()), $"Dream Owner: {Client.Dream.DreamOwner}");
@@ -119,7 +122,7 @@ namespace FurcadiaLibMono.Net.DirectConnection
             };
         }
 
-        [TearDown]
+        [OneTimeTearDown]
         public void Cleanup()
         {
             DisconnectTests();

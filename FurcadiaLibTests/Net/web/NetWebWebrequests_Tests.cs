@@ -20,8 +20,8 @@ namespace FurcadiaLibTests.Net.web
             WebRequest = new WebRequests();
         }
 
-        [TestCase("https://silvermonkey.tsprojects.org/postecho.php")]
-        [TestCase("http://silvermonkey.tsprojects.org/postecho.php")]
+        //  [TestCase("https://silvermonkey.tsprojects.org/postecho.php")]
+        //  [TestCase("http://silvermonkey.tsprojects.org/postecho.php")]
         public void WebRequest_IsNotNull(string url)
         {
             WebRequestsInitialize();

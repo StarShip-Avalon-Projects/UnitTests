@@ -22,6 +22,8 @@ namespace FurcadiaLibTests.Net.Proxy
 
         #region Private Fields
 
+        private object parseLock = new object();
+
         private const string CookieBank = "<font color='emit'><img src='fsh://system.fsh:90' alt='@cookie' /><channel name='@cookie' /> Cookie <a href='http://www.furcadia.com/cookies/Cookie%20Economy.html'>bank</a> has currently collected: 0</font>";
         private const string Emit = "<font color='dragonspeak'><img src='fsh://system.fsh:91' alt='@emit' /><channel name='@emit' /> Silver|Monkey has arrived...</font>";
         private const string EmitBlah = "<font color='emit'><img src='fsh://system.fsh:91' alt='@emit' /><channel name='@emit' /> Blah</font>";
@@ -33,9 +35,11 @@ namespace FurcadiaLibTests.Net.Proxy
         private const string GeroWhisperCunchatize = "<font color='whisper'>[ <name shortname='gerolkae' src='whisper-from'>Gerolkae</name> whispers, \"crunchatize\" to you. ]</font>";
         private const string GeroWhisperHi = "<font color='whisper'>[ <name shortname='gerolkae' src='whisper-from'>Gerolkae</name> whispers, \"Hi\" to you. ]</font>";
         private const string GeroWhisperRollOut = "<font color='whisper'>[ <name shortname='gerolkae' src='whisper-from'>Gerolkae</name> whispers, \"roll out\" to you. ]</font>";
-        private const string PingTest = @"<name shortname='gerolkae'>Gerolkae</name>: ping";
-        private const string PingTest2 = @"<name shortname='gerolkae'>Gerolkae</name>: Ping";
+
+        //private const string PingTest = @"<name shortname='gerolkae'>Gerolkae</name>: ping";
+        //private const string PingTest2 = @"<name shortname='gerolkae'>Gerolkae</name>: Ping";
         private const string WhisperTest = "<font color='whisper'>[ <name shortname='gerolkae' src='whisper-from'>Gerolkae</name> whispers, \"hi\" to you. ]</font>";
+
         private const string YouShouYo = "<font color='shout'>You shout, \"Yo Its Me\"</font>";
 
         //  private const string YouWhisper = "<font color='whisper'>[You whisper \"Logged on\" to<name shortname='gerolkae' forced src='whisper-to'>Gerolkae</name>. ]</font>";
@@ -108,45 +112,51 @@ namespace FurcadiaLibTests.Net.Proxy
         }
 
         [TestCase(WhisperTest, "hi")]
-        [TestCase(PingTest, "ping")]
+        //  [TestCase(PingTest, "ping")]
         [TestCase(GeroWhisperHi, "Hi")]
-        [TestCase(PingTest2, "Ping")]
+        // [TestCase(PingTest2, "Ping")]
         //    [TestCase(YouWhisper, "Logged on")]
         [TestCase(YouShouYo, "Yo Its Me")]
         [TestCase(GeroShout, "ping")]
         [TestCase(EmitWarning, "(<name shortname='silvermonkey'>Silver|Monkey</name> just emitted.)")]
         [TestCase(Emit, "Silver|Monkey has arrived...")]
         [TestCase(EmitBlah, "Blah")]
-        [TestCase(Emote, "Emoe")]
+        [TestCase(Emote, " Emoe")]
         [TestCase(EmitTest, "test")]
         public void ChannelTextIs(string testc, string ExpectedValue)
         {
-            Proxy.ProcessServerChannelData += (sender, Args) =>
+            lock (parseLock)
             {
-                if (sender is ChannelObject ServeObject)
+                bool isTested = false;
+                Proxy.ProcessServerChannelData += (sender, Args) =>
                 {
-                    Assert.That(ServeObject.Player.Message.Trim(),
-                        Is.EqualTo(ExpectedValue.Trim()),
-                        $"Player.Message '{ServeObject.Player.Message}' ExpectedValue: {ExpectedValue}"
-                        );
-                }
-            };
-            Proxy.ParseServerChannel(testc, false);
-            Proxy.ProcessServerChannelData -= (sender, Args) =>
-            {
-                if (sender is ChannelObject ServeObject)
+                    if (!isTested && sender is ChannelObject ServeObject)
+                    {
+                        isTested = true;
+                        Assert.That(ServeObject.Player.Message,
+                            Is.EqualTo(ExpectedValue),
+                            $"Player.Message '{ServeObject.Player.Message}' ExpectedValue: {ExpectedValue}"
+                            );
+                    }
+                };
+                Proxy.ParseServerChannel(testc, false);
+                Proxy.ProcessServerChannelData -= (sender, Args) =>
                 {
-                    Assert.That(ServeObject.Player.Message.Trim(),
-                        Is.EqualTo(ExpectedValue.Trim()),
-                        $"Player.Message '{ServeObject.Player.Message}' ExpectedValue: {ExpectedValue}"
-                        );
-                }
-            };
-            Logger.Debug($"ServerStatus: {Proxy.ServerStatus}");
-            Logger.Debug($"ClientStatus: {Proxy.ClientStatus}");
+                    if (!isTested && sender is ChannelObject ServeObject)
+                    {
+                        isTested = true;
+                        Assert.That(ServeObject.Player.Message,
+                            Is.EqualTo(ExpectedValue),
+                            $"Player.Message '{ServeObject.Player.Message}' ExpectedValue: {ExpectedValue}"
+                            );
+                    }
+                };
+                Logger.Debug($"ServerStatus: {Proxy.ServerStatus}");
+                Logger.Debug($"ClientStatus: {Proxy.ClientStatus}");
+            }
         }
 
-        [TearDown]
+        [OneTimeTearDown]
         public void Cleanup()
         {
             DisconnectTests();
@@ -215,7 +225,7 @@ namespace FurcadiaLibTests.Net.Proxy
         [TestCase(YouWhisper2, "whisper")]
         [TestCase(WhisperTest, "whisper")]
         [TestCase(GeroWhisperHi, "whisper")]
-        [TestCase(PingTest, "say")]
+        // [TestCase(PingTest, "say")]
         [TestCase(YouShouYo, "shout")]
         [TestCase(GeroShout, "shout")]
         [TestCase(EmitWarning, "@emit")]
@@ -224,32 +234,38 @@ namespace FurcadiaLibTests.Net.Proxy
         [TestCase(Emote, "emote")]
         public void ExpectedChannelNameIs(string ChannelCode, string ExpectedValue)
         {
-            Proxy.ProcessServerChannelData += (sender, Args) =>
+            lock (parseLock)
             {
-                if (sender is ChannelObject ServeObject)
+                bool isTested = false;
+                Proxy.ProcessServerChannelData += (sender, Args) =>
                 {
-                    Assert.That(Args.Channel,
-                        Is.EqualTo(ExpectedValue),
-                        $"Args.Channel '{Args.Channel}' ExpectedValue: {ExpectedValue}"
-                        );
-                }
-            };
+                    if (!isTested && sender is ChannelObject ServeObject)
+                    {
+                        isTested = true;
+                        Assert.That(Args.Channel,
+                            Is.EqualTo(ExpectedValue),
+                            $"Args.Channel '{Args.Channel}' ExpectedValue: {ExpectedValue}"
+                            );
+                    }
+                };
 
-            Proxy.ParseServerChannel(ChannelCode, false);
-            Proxy.ProcessServerChannelData -= (sender, Args) =>
-            {
-                if (sender is ChannelObject ServeObject)
+                Proxy.ParseServerChannel(ChannelCode, false);
+                Proxy.ProcessServerChannelData -= (sender, Args) =>
                 {
-                    Assert.That(Args.Channel,
-                        Is.EqualTo(ExpectedValue),
-                        $"Args.Channel '{Args.Channel}' ExpectedValue: {ExpectedValue}"
-                        );
-                }
-            };
+                    if (!isTested && sender is ChannelObject ServeObject)
+                    {
+                        isTested = true;
+                        Assert.That(Args.Channel,
+                            Is.EqualTo(ExpectedValue),
+                            $"Args.Channel '{Args.Channel}' ExpectedValue: {ExpectedValue}"
+                            );
+                    }
+                };
+            }
         }
 
         [TestCase(WhisperTest, "Gerolkae")]
-        [TestCase(PingTest, "Gerolkae")]
+        //  [TestCase(PingTest, "Gerolkae")]
         [TestCase(YouWhisper2, "Silver Monkey")]
         [TestCase(GeroShout, "Gerolkae")]
         [TestCase(YouShouYo, "Silver Monkey")]
@@ -260,29 +276,35 @@ namespace FurcadiaLibTests.Net.Proxy
         [TestCase(GeroWhisperHi, "Gerolkae")]
         public void ExpectedCharachter(string testc, string ExpectedValue)
         {
-            Proxy.ProcessServerChannelData += (sender, Args) =>
+            lock (parseLock)
             {
-                if (sender is ChannelObject ServeObject)
+                bool isTested = false;
+                Proxy.ProcessServerChannelData += (sender, Args) =>
                 {
-                    Assert.That(ServeObject.Player.ShortName,
-                        Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
-                }
-            };
+                    if (!isTested && sender is ChannelObject ServeObject)
+                    {
+                        isTested = true;
+                        Assert.That(ServeObject.Player.ShortName,
+                            Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
+                    }
+                };
 
-            Proxy.ParseServerChannel(testc, false);
-            Proxy.ProcessServerChannelData -= (sender, Args) =>
-            {
-                if (sender is ChannelObject ServeObject)
+                Proxy.ParseServerChannel(testc, false);
+                Proxy.ProcessServerChannelData -= (sender, Args) =>
                 {
-                    Assert.That(ServeObject.Player.ShortName,
-                        Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
-                }
-            };
-            Logger.Debug($"ServerStatus: {Proxy.ServerStatus}");
-            Logger.Debug($"ClientStatus: {Proxy.ClientStatus}");
+                    if (!isTested && sender is ChannelObject ServeObject)
+                    {
+                        isTested = true;
+                        Assert.That(ServeObject.Player.ShortName,
+                            Is.EqualTo(ExpectedValue.ToFurcadiaShortName()));
+                    }
+                };
+                Logger.Debug($"ServerStatus: {Proxy.ServerStatus}");
+                Logger.Debug($"ClientStatus: {Proxy.ClientStatus}");
+            }
         }
 
-        [SetUp]
+        [OneTimeSetUp]
         public void Initialize()
         {
 #pragma warning disable CS0618 // Obsolete, Place holder till Accounts are ready
@@ -307,29 +329,35 @@ namespace FurcadiaLibTests.Net.Proxy
         [TestCase(GeroShout, "ping")]
         public void ProxyConnection_InstructionObjectPlayerIs(string testc, string ExpectedValue)
         {
-            Proxy.SendFormattedTextToServer("- Shout");
-            Proxy.ProcessServerChannelData += (sender, Args) =>
+            lock (parseLock)
             {
-                if (sender is ChannelObject ServeObject)
+                bool isTested = false;
+                Proxy.SendFormattedTextToServer("- Shout");
+                Proxy.ProcessServerChannelData += (sender, Args) =>
                 {
-                    Assert.That(ServeObject.Player.Message.Trim(),
-                        Is.EqualTo(ExpectedValue.Trim()),
-                        $"Player.Message '{ServeObject.Player.Message}' ExpectedValue: {ExpectedValue}"
-                        );
-                }
-            };
+                    if (!isTested && sender is ChannelObject ServeObject)
+                    {
+                        isTested = true;
+                        Assert.That(ServeObject.Player.Message.Trim(),
+                            Is.EqualTo(ExpectedValue.Trim()),
+                            $"Player.Message '{ServeObject.Player.Message}' ExpectedValue: {ExpectedValue}"
+                            );
+                    }
+                };
 
-            Proxy.ParseServerChannel(testc, false);
-            Proxy.ProcessServerChannelData -= (sender, Args) =>
-            {
-                if (sender is ChannelObject ServeObject)
+                Proxy.ParseServerChannel(testc, false);
+                Proxy.ProcessServerChannelData -= (sender, Args) =>
                 {
-                    Assert.That(ServeObject.Player.Message.Trim(),
-                        Is.EqualTo(ExpectedValue.Trim()),
-                        $"Player.Message '{ServeObject.Player.Message}' ExpectedValue: {ExpectedValue}"
-                        );
-                }
-            };
+                    if (!isTested && sender is ChannelObject ServeObject)
+                    {
+                        isTested = true;
+                        Assert.That(ServeObject.Player.Message.Trim(),
+                            Is.EqualTo(ExpectedValue.Trim()),
+                            $"Player.Message '{ServeObject.Player.Message}' ExpectedValue: {ExpectedValue}"
+                            );
+                    }
+                };
+            }
         }
 
         #endregion Public Methods
